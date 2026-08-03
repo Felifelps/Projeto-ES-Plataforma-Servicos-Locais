@@ -21,7 +21,8 @@ export class RegisterComponent {
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
+      confirmPassword: ['', [Validators.required]],
+      role: ['', [Validators.required]]
     },
     { validators: this.passwordMatchValidator }
   );
@@ -47,29 +48,30 @@ export class RegisterComponent {
   }
 
   onSubmit(): void {
-    if (this.registerForm.invalid) {
-      this.registerForm.markAllAsTouched();
-      return;
-    }
-
-    this.loading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    const { name, email, password } = this.registerForm.value;
-
-    this.authService.register({ name, email, password }).subscribe({
-      next: () => {
-        this.loading = false;
-        this.successMessage = 'Cadastro realizado com sucesso! Redirecionando...';
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 2000);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.errorMessage = err?.error?.message || 'Erro ao realizar cadastro. Tente novamente.';
-      }
-    });
+  if (this.registerForm.invalid) {
+    this.registerForm.markAllAsTouched();
+    return;
   }
+
+  this.loading = true;
+  this.errorMessage = '';
+  this.successMessage = '';
+
+  const { name, email, password } = this.registerForm.value;
+
+  this.authService.register({ name, email, password, role: 'USER' }).subscribe({
+    next: () => {
+      this.loading = false;
+      this.successMessage = 'Cadastro realizado com sucesso! Redirecionando...';
+      setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 2000);
+    },
+    error: (err) => {
+      console.error(err);
+      this.loading = false;
+      this.errorMessage = err?.error?.message || 'Erro ao realizar cadastro. Tente novamente.';
+    }
+  });
+}
 }
