@@ -14,6 +14,6 @@ export class AuthService {
   private readonly apiUrl = 'http://localhost:8080/api/auth';
 
   register(data: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, data);
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/cadastro`, data);
   }
 }

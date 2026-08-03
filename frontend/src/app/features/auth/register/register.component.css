@@ -75,7 +75,7 @@
   margin-bottom: 20px;
   text-align: center;
 
-  &-danger {
+  :is(-danger) {
     background-color: #fef2f2;
     color: #991b1b;
     border: 1px solid #fecaca;
