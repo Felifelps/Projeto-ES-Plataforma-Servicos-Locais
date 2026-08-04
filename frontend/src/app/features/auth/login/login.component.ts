@@ -45,7 +45,7 @@ export class LoginComponent {
       const response = await firstValueFrom(this.authService.login({ email, password }));
       console.log('Login bem-sucedido:', response);
       localStorage.setItem('token', response.token);
-      this.router.navigate(['/']); // ajuste para a rota principal do seu app
+      this.router.navigate(['/']); 
     } catch (err: any) {
       console.error('Erro no login:', err);
       this.errorMessage = err?.error?.message || 'Email ou senha inválidos.';

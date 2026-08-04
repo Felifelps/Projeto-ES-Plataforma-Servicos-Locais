@@ -1,0 +1,60 @@
+<div class="register-container">
+  <div class="register-card">
+    <h2>Entrar</h2>
+    <p class="subtitle">Acesse sua conta</p>
+
+    @if (errorMessage) {
+      <div class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="seu.email@exemplo.com"
+          [class.invalid]="isFieldInvalid('email')"
+        />
+        @if (isFieldInvalid('email')) {
+          <span class="error-text">
+            @if (loginForm.get('email')?.hasError('required')) {
+              O e-mail é obrigatório.
+            } @else if (loginForm.get('email')?.hasError('email')) {
+              Informe um e-mail válido.
+            }
+          </span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Sua senha"
+          [class.invalid]="isFieldInvalid('password')"
+        />
+        @if (isFieldInvalid('password')) {
+          <span class="error-text">A senha é obrigatória.</span>
+        }
+      </div>
+
+      <button type="submit" [disabled]="loading" class="btn-submit">
+        @if (loading) {
+          Entrando...
+        } @else {
+          Entrar
+        }
+      </button>
+    </form>
+
+    <div class="footer-links">
+      <p>Não tem uma conta? <a routerLink="/register">Cadastre-se</a></p>
+    </div>
+  </div>
+</div>
