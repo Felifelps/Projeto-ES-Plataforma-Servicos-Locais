@@ -42,9 +42,7 @@ export class LoginComponent {
     const { email, password } = this.loginForm.value;
 
     try {
-      const response = await firstValueFrom(this.authService.login({ email, password }));
-      console.log('Login bem-sucedido:', response);
-      localStorage.setItem('token', response.token);
+      await firstValueFrom(this.authService.login({ email, password }));
       this.router.navigate(['/']); 
     } catch (err: any) {
       console.error('Erro no login:', err);
