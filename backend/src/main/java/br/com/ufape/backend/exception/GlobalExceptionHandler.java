@@ -9,11 +9,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import tools.jackson.databind.exc.InvalidFormatException;
 
+import org.springframework.security.core.AuthenticationException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponseDto> handleAuthError(AuthenticationException ex) {
+        return buildResponse("Email ou senha inválidos", HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(BaseException.class)
     ResponseEntity<ErrorResponseDto> handleBaseException(BaseException ex) {
         HttpStatus httpStatus = ex.getHttpStatus();
