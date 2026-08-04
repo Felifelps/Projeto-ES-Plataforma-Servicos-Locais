@@ -1,10 +1,15 @@
-<div class="register-container">
-  <div class="register-card">
-    <h2>Entrar</h2>
-    <p class="subtitle">Acesse sua conta</p>
+<main class="login-container">
+  <div class="platform-brand" aria-label="Freelance">
+    <span class="platform-mark" aria-hidden="true">F</span>
+    <span>FREELANCE</span>
+  </div>
+
+  <section class="login-card" aria-labelledby="login-title">
+    <h1 id="login-title">Acesse sua Conta</h1>
+    <p class="subtitle">Informe seus dados para continuar.</p>
 
     @if (errorMessage) {
-      <div class="alert alert-danger">
+      <div class="alert alert-danger" role="alert">
         {{ errorMessage }}
       </div>
     }
@@ -17,6 +22,7 @@
           type="email"
           formControlName="email"
           placeholder="seu.email@exemplo.com"
+          autocomplete="email"
           [class.invalid]="isFieldInvalid('email')"
         />
         @if (isFieldInvalid('email')) {
@@ -36,7 +42,8 @@
           id="password"
           type="password"
           formControlName="password"
-          placeholder="Sua senha"
+          placeholder="Digite sua senha"
+          autocomplete="current-password"
           [class.invalid]="isFieldInvalid('password')"
         />
         @if (isFieldInvalid('password')) {
@@ -44,7 +51,7 @@
         }
       </div>
 
-      <button type="submit" [disabled]="loading" class="btn-submit">
+      <button type="submit" class="btn-submit" [disabled]="loading">
         @if (loading) {
           Entrando...
         } @else {
@@ -54,7 +61,7 @@
     </form>
 
     <div class="footer-links">
-      <p>Não tem uma conta? <a routerLink="/register">Cadastre-se</a></p>
+      <p>Não possui uma conta? <a routerLink="/register">Cadastre-se</a></p>
     </div>
-  </div>
-</div>
+  </section>
+</main>
