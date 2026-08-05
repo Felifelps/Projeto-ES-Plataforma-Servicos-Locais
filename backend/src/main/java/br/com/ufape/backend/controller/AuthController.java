@@ -6,6 +6,7 @@ import br.com.ufape.backend.model.User;
 import br.com.ufape.backend.dto.UserRequestDto;
 import br.com.ufape.backend.dto.UserResponseDto;
 import br.com.ufape.backend.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,16 @@ public class AuthController {
     public ResponseEntity<UserResponseDto> register(@RequestBody @Valid UserRequestDto userDTO) {
         UserResponseDto userResponseDto = this.authService.register(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.replace("Bearer ", "");
+            tokenService.invalidateToken(token);
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/login")
