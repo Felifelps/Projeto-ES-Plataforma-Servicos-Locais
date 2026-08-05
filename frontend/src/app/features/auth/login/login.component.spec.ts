@@ -20,7 +20,7 @@ describe('LoginComponent', () => {
     }).compileComponents();
   });
 
-  it('should redirect to the home page after a successful login', async () => {
+  it('should redirect to the logged area after a successful login', async () => {
     const fixture = TestBed.createComponent(LoginComponent);
     const component = fixture.componentInstance;
     const router = TestBed.inject(Router);
@@ -37,7 +37,7 @@ describe('LoginComponent', () => {
       email: 'usuario@teste.com',
       password: '123456'
     });
-    expect(navigateSpy).toHaveBeenCalledWith(['/home']);
+    expect(navigateSpy).toHaveBeenCalledWith(['/area-logada']);
   });
 
   it('should display the backend message when login fails', async () => {

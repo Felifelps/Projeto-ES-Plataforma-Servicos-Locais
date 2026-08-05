@@ -43,7 +43,7 @@ export class LoginComponent {
 
     try {
       await firstValueFrom(this.authService.login({ email, password }));
-      this.router.navigate(['/home']);
+      this.router.navigate(['/area-logada']);
     } catch (err: any) {
       console.error('Erro no login:', err);
       this.errorMessage = err?.error?.message || 'Email ou senha inválidos.';
