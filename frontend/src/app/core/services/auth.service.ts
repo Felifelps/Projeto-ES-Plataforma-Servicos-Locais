@@ -15,7 +15,7 @@ export class AuthService {
   private readonly tokenKey = 'auth_token';
 
   register(data: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.apiUrl}/cadastro`, data);
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, data);
   }
 
   login(data: LoginRequest): Observable<LoginResponse> {
