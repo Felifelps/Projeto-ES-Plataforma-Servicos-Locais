@@ -101,13 +101,13 @@
   margin-bottom: 20px;
   text-align: center;
 
-  :is(-danger) {
+  &.alert-danger {
     background-color: #fef2f2;
     color: #991b1b;
     border: 1px solid #fecaca;
   }
 
-  :is(-success) {
+  &.alert-success {
     background-color: #f0fdf4;
     color: #166534;
     border: 1px solid #bbf7d0;

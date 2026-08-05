@@ -16,9 +16,5 @@ public record UserRequestDto (
 
     @NotBlank(message="A senha é obrigatória")
     @Size(min=6, message="A senha deve ter no mínimo 6 caracteres")
-    String password,
-
-    @NotNull(message="O cargo do usuário é obrigatório")
-    String role
-
+    String password
 ) {}
