@@ -22,7 +22,7 @@ export class RegisterComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
-      role: ['', [Validators.required]]
+      role: ['USER', [Validators.required]]
     },
     { validators: this.passwordMatchValidator }
   );
