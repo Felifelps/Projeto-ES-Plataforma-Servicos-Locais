@@ -26,7 +26,7 @@ public class AuthService {
         User user = new User(
                 userDto.name(),
                 userDto.email(),
-                handleUserRole(userDto.role()),
+                UserRole.USER,
                 encryptPassword(userDto.password())
         );
 
@@ -38,14 +38,6 @@ public class AuthService {
     private void validateEmailNotUsed(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyExistsException(email);
-        }
-    }
-
-    private UserRole handleUserRole(String userRole) {
-        try {
-            return UserRole.valueOf(userRole);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidRoleException(userRole);
         }
     }
 

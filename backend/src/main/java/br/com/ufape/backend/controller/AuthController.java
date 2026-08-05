@@ -38,7 +38,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/cadastro")
+    @PostMapping("/register")
     public ResponseEntity<UserResponseDto> register(@RequestBody @Valid UserRequestDto userDTO) {
         UserResponseDto userResponseDto = this.authService.register(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
