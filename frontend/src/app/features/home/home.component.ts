@@ -1,14 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
-  selector: 'app-logged-area',
+  selector: 'app-home',
   standalone: true,
-  templateUrl: './logged-area.component.html',
-  styleUrls: ['./logged-area.component.css']
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
 })
-export class LoggedAreaComponent {
+export class HomeComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
