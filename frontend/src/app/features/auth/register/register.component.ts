@@ -59,7 +59,7 @@ export class RegisterComponent {
 
   const { name, email, password } = this.registerForm.value;
 
-  this.authService.register({ name, email, password, role: 'USER' }).subscribe({
+  this.authService.register({ name, email, password }).subscribe({
     next: () => {
       this.loading = false;
       this.successMessage = 'Cadastro realizado com sucesso! Redirecionando...';
