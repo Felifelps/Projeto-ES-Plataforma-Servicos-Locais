@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { RegisterRequest } from '../models/register-request.model';
 import { RegisterResponse } from '../models/register-response.model';
@@ -32,8 +32,16 @@ export class AuthService {
     return !!this.getToken();
   }
 
-  logout(): void {
-    localStorage.removeItem(this.tokenKey);
+  logout(): Observable<void> {
+    const token = this.getToken();
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.post<void>(`${this.apiUrl}/logout`, {}, { headers }).pipe(
+      tap(() => localStorage.removeItem(this.tokenKey))
+    );
   }
 
   private storeToken(token: string): void {
