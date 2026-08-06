@@ -20,11 +20,11 @@ export const routes: Routes = [
       import('./features/auth/login/login.component').then((m) => m.LoginComponent),
   },
   {
-    path: 'area-logada',
+    path: 'home',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/authenticated/logged-area/logged-area.component').then(
-        (m) => m.LoggedAreaComponent,
+      import('./features/home/home.component').then(
+        (m) => m.HomeComponent,
       ),
   },
 ];

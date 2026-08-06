@@ -1,0 +1,54 @@
+.home-page {
+  min-height: 100vh;
+  padding: 32px;
+  background-color: #f4f6f9;
+  color: #111827;
+}
+
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: #2563eb;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.home-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.home-header button {
+  padding: 10px 20px;
+  color: #ffffff;
+  background-color: #dc2626;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.home-content {
+  display: grid;
+  gap: 16px;
+}
+
+.home-card {
+  padding: 24px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 680px;
+}
+
+.home-card h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}

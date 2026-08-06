@@ -29,11 +29,36 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) {
+      return false;
+    }
+
+    const payload = this.decodeToken(token);
+    const exp = payload?.exp;
+
+    if (!exp) {
+      this.clearToken();
+      return false;
+    }
+
+    const isValid = exp * 1000 > Date.now();
+    if (!isValid) {
+      this.clearToken();
+    }
+
+    return isValid;
   }
 
   logout(): Observable<void> {
     const token = this.getToken();
+    if (!token) {
+      this.clearToken();
+      return new Observable((observer) => {
+        observer.next();
+        observer.complete();
+      });
+    }
 
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`
@@ -50,5 +75,19 @@ export class AuthService {
     }
 
     localStorage.setItem(this.tokenKey, token);
+  }
+
+  private clearToken(): void {
+    localStorage.removeItem(this.tokenKey);
+  }
+
+  private decodeToken(token: string): { exp?: number } | null {
+    try {
+      const payload = token.split('.')[1];
+      const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+      return JSON.parse(decoded);
+    } catch {
+      return null;
+    }
   }
 }
