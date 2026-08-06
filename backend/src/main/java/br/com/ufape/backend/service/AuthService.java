@@ -4,7 +4,6 @@ import br.com.ufape.backend.dto.UserRequestDto;
 import br.com.ufape.backend.dto.UserResponseDto;
 import br.com.ufape.backend.enums.UserRole;
 import br.com.ufape.backend.exception.EmailAlreadyExistsException;
-import br.com.ufape.backend.exception.InvalidRoleException;
 import br.com.ufape.backend.model.User;
 import br.com.ufape.backend.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,10 +22,12 @@ public class AuthService {
     public UserResponseDto register(UserRequestDto userDto) {
         validateEmailNotUsed(userDto.email());
 
+        UserRole role = userDto.role() != null ? userDto.role() : UserRole.USER;
+
         User user = new User(
                 userDto.name(),
                 userDto.email(),
-                UserRole.USER,
+                role,
                 encryptPassword(userDto.password())
         );
 
