@@ -1,10 +1,11 @@
 .register-container {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   background-color: #f4f6f9;
-  padding: 20px;
+  padding: 96px 20px 20px;
 }
 
 .register-card {
@@ -33,7 +34,8 @@
 .platform-brand {
   position: absolute;
   top: 28px;
-  left: 32px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -41,6 +43,7 @@
   font-size: 16px;
   font-weight: 800;
   letter-spacing: 2px;
+  z-index: 2;
 }
 
 .platform-mark {

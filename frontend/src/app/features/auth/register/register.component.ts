@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
+import { PlatformBrandComponent } from '../../../shared/components/platform-brand/platform-brand.component';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, PlatformBrandComponent],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
@@ -21,8 +22,7 @@ export class RegisterComponent {
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]],
-      role: ['USER', [Validators.required]]
+      confirmPassword: ['', [Validators.required]]
     },
     { validators: this.passwordMatchValidator }
   );

@@ -4,11 +4,12 @@ import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
+import { PlatformBrandComponent } from '../../../shared/components/platform-brand/platform-brand.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, PlatformBrandComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -43,7 +44,7 @@ export class LoginComponent {
 
     try {
       await firstValueFrom(this.authService.login({ email, password }));
-      this.router.navigate(['/area-logada']);
+      this.router.navigate(['/home']);
     } catch (err: any) {
       console.error('Erro no login:', err);
       this.errorMessage = err?.error?.message || 'Email ou senha inválidos.';

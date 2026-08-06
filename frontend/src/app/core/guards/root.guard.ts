@@ -8,6 +8,6 @@ export const rootGuard: CanActivateFn = () => {
   const router = inject(Router);
 
   return authService.isAuthenticated()
-    ? router.createUrlTree(['/area-logada'])
+    ? router.createUrlTree(['/home'])
     : router.createUrlTree(['/login']);
 };
