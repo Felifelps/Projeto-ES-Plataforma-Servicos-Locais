@@ -1,0 +1,64 @@
+<main class="login-container">
+  <app-platform-brand></app-platform-brand>
+
+  <section class="login-card" aria-labelledby="login-title">
+    <h1 id="login-title">Acesse sua Conta</h1>
+    <p class="subtitle">Informe seus dados para continuar.</p>
+
+    @if (errorMessage) {
+      <div class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="seu.email@exemplo.com"
+          autocomplete="email"
+          [class.invalid]="isFieldInvalid('email')"
+        />
+        @if (isFieldInvalid('email')) {
+          <span class="error-text">
+            @if (loginForm.get('email')?.hasError('required')) {
+              O e-mail é obrigatório.
+            } @else if (loginForm.get('email')?.hasError('email')) {
+              Informe um e-mail válido.
+            }
+          </span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Digite sua senha"
+          autocomplete="current-password"
+          [class.invalid]="isFieldInvalid('password')"
+        />
+        @if (isFieldInvalid('password')) {
+          <span class="error-text">A senha é obrigatória.</span>
+        }
+      </div>
+
+      <button type="submit" class="btn-submit" [disabled]="loading">
+        @if (loading) {
+          Entrando...
+        } @else {
+          Entrar
+        }
+      </button>
+    </form>
+
+    <div class="footer-links">
+      <p>Não possui uma conta? <a routerLink="/register">Cadastre-se</a></p>
+    </div>
+  </section>
+</main>

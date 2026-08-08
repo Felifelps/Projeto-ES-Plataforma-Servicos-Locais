@@ -1,0 +1,120 @@
+<div class="register-container">
+
+  <app-platform-brand></app-platform-brand>
+
+  <div class="register-card">
+    <h2>Criar Conta</h2>
+    <p class="subtitle">Preencha os dados abaixo para se cadastrar</p>
+
+    @if (errorMessage) {
+      <div class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+    }
+
+    @if (successMessage) {
+      <div class="alert alert-success">
+        {{ successMessage }}
+      </div>
+    }
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Campo Nome -->
+      <div class="form-group">
+        <label for="name">Nome Completo</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Seu nome completo"
+          [class.invalid]="isFieldInvalid('name')"
+        />
+        @if (isFieldInvalid('name')) {
+          <span class="error-text">
+            @if (registerForm.get('name')?.hasError('required')) {
+              O nome é obrigatório.
+            } @else if (registerForm.get('name')?.hasError('minlength')) {
+              O nome deve ter no mínimo 3 caracteres.
+            }
+          </span>
+        }
+      </div>
+
+      <!-- Campo E-mail --> 
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="seu.email@exemplo.com"
+          [class.invalid]="isFieldInvalid('email')"
+        />
+        @if (isFieldInvalid('email')) {
+          <span class="error-text">
+            @if (registerForm.get('email')?.hasError('required')) {
+              O e-mail é obrigatório.
+            } @else if (registerForm.get('email')?.hasError('email')) {
+              Informe um e-mail válido.
+            }
+          </span>
+        }
+      </div>
+
+      <!-- Campo Senha -->
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Mínimo de 6 caracteres"
+          [class.invalid]="isFieldInvalid('password')"
+        />
+        @if (isFieldInvalid('password')) {
+          <span class="error-text">
+            @if (registerForm.get('password')?.hasError('required')) {
+              A senha é obrigatória.
+            } @else if (registerForm.get('password')?.hasError('minlength')) {
+              A senha deve ter pelo menos 6 caracteres.
+            }
+          </span>
+        }
+      </div>
+
+      <!-- Campo Confirmação de Senha -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar Senha</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Repita sua senha"
+          [class.invalid]="isFieldInvalid('confirmPassword')"
+        />
+        @if (isFieldInvalid('confirmPassword')) {
+          <span class="error-text">
+            @if (registerForm.get('confirmPassword')?.hasError('required')) {
+              A confirmação de senha é obrigatória.
+            } @else if (registerForm.get('confirmPassword')?.hasError('passwordMismatch')) {
+              As senhas não coincidem.
+            }
+          </span>
+        }
+      </div>
+
+      <!-- Botão Submit -->
+      <button type="submit" [disabled]="loading" class="btn-submit">
+        @if (loading) {
+          Carregando...
+        } @else {
+          Cadastrar
+        }
+      </button>
+    </form>
+
+    <div class="footer-links">
+      <p>Já possui uma conta? <a routerLink="/login">Faça Login</a></p>
+    </div>
+  </div>
+</div>
