@@ -6,7 +6,7 @@ export default function Logo() {
     <Link to="/" className="logo-link" aria-label="Ir para a página inicial">
         <div className="platform-brand" aria-label="Freelance">
             <span className="platform-mark" aria-hidden="true">F</span>
-            <span className="platform-name">FREELANCE</span>
+            <span className="platform-title">FREELANCE</span>
         </div>
     </Link>
     )

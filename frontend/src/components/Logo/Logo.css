@@ -1,30 +1,32 @@
 .logo-link {
   text-decoration: none;
   color: inherit;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px; /* Espaço entre a logo e o card abaixo */
 }
 
 .platform-brand {
-  position: absolute;
-  top: 28px;
-  left: 32px;
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #111111;
-  font-size: 16px;
   font-weight: 800;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 }
 
 .platform-mark {
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
+  background-color: #0f172a;
   color: #ffffff;
-  background-color: #111111;
-  border-radius: 7px;
-  font-size: 17px;
-  letter-spacing: 0;
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+.platform-title {
+  color: #0f172a;
+  font-size: 20px;
 }
