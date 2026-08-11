@@ -1,16 +1,24 @@
-import {Route, Routes} from "react-router-dom";
-import Login from "../pages/Login.tsx";
-import Home from "../pages/Home.tsx";
-import Register from "../pages/Register.tsx";
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Login from '../pages/Login/Login';
+import Register from '../pages/Register/Register';
+import Home from '../pages/Home/Home';
+import PrivateRoute  from '../routes/PrivateRoute';
 
+export default function AppRoutes() {
+  return (
+      <Routes>
+        {/* Rotas Públicas */}
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-function AppRoutes() {
-  return <Routes>
-    <Route path='/' element={<Login/>}/>
-    <Route path='/login' element={<Login/>}/>
-    <Route path='/register' element={<Register/>}/>
-    <Route path='/home' element={<Home/>}/>
-  </Routes>
-}
+        {/* Rotas Protegidas (Todas as rotas filhas exigem autenticação) */}
+        <Route element={<PrivateRoute allowedRoles={['USER', 'ADMIN']} />}>
+          
+        </Route>
 
-export default AppRoutes;
+        {/* Redirecionamento para rota não encontrada ou padrão */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+  );
+};

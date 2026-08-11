@@ -1,0 +1,136 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* Organiza logo e card um abaixo do outro */
+  align-items: center;    /* Centraliza na horizontal */
+  justify-content: center; /* Centraliza na vertical */
+  padding: 20px;
+  background-color: #f8fafc;
+  box-sizing: border-box;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.login-card h1 {
+  margin: 0 0 8px;
+  color: #1a1a1a;
+  font-size: 24px;
+  text-align: center;
+}
+
+.subtitle {
+  margin: 0 0 24px;
+  color: #666666;
+  font-size: 14px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: #333333;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-group input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #3b82f6;
+  outline: none;
+}
+
+.form-group input.invalid {
+  border-color: #ef4444;
+}
+
+.error-text {
+  display: block;
+  margin-top: 4px;
+  color: #ef4444;
+  font-size: 12px;
+}
+
+.alert {
+  margin-bottom: 20px;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.alert-danger {
+  color: #991b1b;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  color: #ffffff;
+  background-color: #2563eb;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.btn-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.footer-links {
+  margin-top: 20px;
+  color: #666666;
+  font-size: 14px;
+  text-align: center;
+}
+
+.footer-links a {
+  color: #2563eb;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .platform-brand {
+    top: 20px;
+    left: 20px;
+  }
+
+  .login-container {
+    padding-top: 68px;
+  }
+}
