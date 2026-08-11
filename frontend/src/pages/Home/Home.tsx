@@ -82,7 +82,7 @@ export default function Home() {
               </button>
             )}
 
-            {!isAuthenticated && (
+            {isAuthenticated && (
               <Link to="/register" className="btn-hero-secondary">
                 Quero prestar serviços
               </Link>
