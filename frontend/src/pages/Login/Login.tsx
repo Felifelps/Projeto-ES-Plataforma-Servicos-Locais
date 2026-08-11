@@ -18,7 +18,7 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-export const Login: React.FC = () => {
+export default function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -127,5 +127,3 @@ export const Login: React.FC = () => {
     </main>
   );
 };
-
-export default Login;

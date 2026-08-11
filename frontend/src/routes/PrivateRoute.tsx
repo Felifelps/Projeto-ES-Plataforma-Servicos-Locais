@@ -1,4 +1,3 @@
-import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { authService } from '../services/auth.service';
 
@@ -6,7 +5,7 @@ interface PrivateRouteProps {
     allowedRoles?: string[]; // Lista de roles permitidos para acessar a rota
 }
 
-export const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles }) => {
+export default function PrivateRoute({ allowedRoles }: PrivateRouteProps) {
   const location = useLocation();
   const isAuthenticated = authService.isAuthenticated();
   const userRole = authService.getUserRole();
