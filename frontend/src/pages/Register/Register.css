@@ -31,31 +31,6 @@
   text-align: center;
 }
 
-.platform-brand {
-  position: absolute;
-  top: 28px;
-  left: 32px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #111111;
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 2px;
-}
-
-.platform-mark {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  color: #ffffff;
-  background-color: #111111;
-  border-radius: 7px;
-  font-size: 17px;
-  letter-spacing: 0;
-}
-
 .form-group {
   margin-bottom: 18px;
 }

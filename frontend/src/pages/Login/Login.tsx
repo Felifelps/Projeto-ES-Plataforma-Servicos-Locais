@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { authService } from '../../services/auth.service';
 import './Login.css';
+import Logo from '../../components/Logo/Logo';
 
 // Schema do Zod equivalente aos Validators do Angular
 const loginSchema = z.object({
@@ -62,10 +63,8 @@ export default function Login() {
 
   return (
     <main className="login-container">
-      <div className="platform-brand" aria-label="Freelance">
-        <span className="platform-mark" aria-hidden="true">F</span>
-        <span>FREELANCE</span>
-      </div>
+      
+      <Logo />
 
       <section className="login-card" aria-labelledby="login-title">
         <h1 id="login-title">Acesse sua Conta</h1>

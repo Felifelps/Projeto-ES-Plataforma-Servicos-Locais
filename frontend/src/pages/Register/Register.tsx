@@ -1,11 +1,12 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../services/auth.service';
 import './Register.css';
+import Logo from '../../components/Logo/Logo';
 
 // Esquema de validação equivalente aos Validators do Angular
 const registerSchema = z.object({
@@ -74,10 +75,8 @@ export default function Register() {
 
   return (
     <div className="register-container">
-      <div className="platform-brand" aria-label="Freelance">
-        <span className="platform-mark" aria-hidden="true">F</span>
-        <span>FREELANCE</span>
-      </div>
+
+      <Logo />
 
       <div className="register-card">
         <h2>Criar Conta</h2>

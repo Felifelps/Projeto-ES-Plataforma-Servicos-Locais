@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from '../pages/Login/Login';
 import Register from '../pages/Register/Register';
-import Home from '../pages/Home/home';
+import Home from '../pages/Home/Home';
 import PrivateRoute  from '../routes/PrivateRoute';
 
 export default function AppRoutes() {
