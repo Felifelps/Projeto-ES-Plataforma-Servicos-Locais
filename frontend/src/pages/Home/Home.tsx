@@ -6,11 +6,14 @@ import './Home.css';
 export const Home: React.FC = () => {
   const navigate = useNavigate();
   const userRole = authService.getUserRole() || 'USER';
+  const userName = authService.getUserName() || 'Usuário';
 
   const handleLogout = async () => {
     await authService.logout();
     navigate('/login');
   };
+
+
 
   return (
     <div className="home-container">
@@ -23,7 +26,7 @@ export const Home: React.FC = () => {
 
         <div className="user-info">
           <span className={`role-badge ${userRole.toLowerCase()}`}>
-            {userRole}
+            {userName}
           </span>
           <button onClick={handleLogout} className="btn-logout">
             Sair

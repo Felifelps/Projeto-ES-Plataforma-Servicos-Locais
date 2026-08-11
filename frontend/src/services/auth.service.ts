@@ -57,6 +57,14 @@ class AuthService {
     return isValid;
   }
 
+  getUserName(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    const payload = this.decodeToken(token);
+    return payload?.name || null;
+  }
+
   // 6. Logout
   async logout(): Promise<void> {
     const token = this.getToken();
@@ -88,7 +96,7 @@ class AuthService {
     localStorage.removeItem(this.tokenKey);
   }
 
-  private decodeToken(token: string): { exp?: number; role?: string; roles?: string[] } | null {
+  private decodeToken(token: string): { exp?: number; role?: string; roles?: string[]; name?: string } | null {
     try {
       const payload = token.split('.')[1];
       const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));

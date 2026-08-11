@@ -17,7 +17,7 @@ export const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles }) => {
   }
 
   if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
-    // 2. Autenticado, mas não tem a Role exigida pela história 
+    // Autenticado, mas não tem a Role exigida pela história 
     return <Navigate to="/home" replace />;
   }
 
