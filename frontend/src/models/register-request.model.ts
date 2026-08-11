@@ -1,0 +1,7 @@
+//Modelo do Request para registrar usuário
+export interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+  role?: 'USER' | 'ADMIN';
+}
