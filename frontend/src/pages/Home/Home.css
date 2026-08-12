@@ -53,6 +53,12 @@
   color: #3730a3;
 }
 
+.role-badge.prestador {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.btn-logout {
 /* Botões padrão */
 .btn-primary {
   padding: 8px 16px;
@@ -117,6 +123,13 @@
   flex-wrap: wrap;
 }
 
+.welcome-card {
+  width: 100%;
+  max-width: 600px;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 .btn-hero-primary,
 .btn-hero-worker {
   padding: 14px 28px;
@@ -137,6 +150,12 @@
   background-color: #1d4ed8;
 }
 
+.status-box {
+  margin-top: 24px;
+  padding: 16px 20px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
 .btn-hero-worker {
   background-color: #10b981;
   color: #ffffff;
@@ -170,6 +189,79 @@
   margin-bottom: 8px;
 }
 
+.status-box code {
+  background-color: #e5e7eb;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #1f2937;
+}
+
+.provider-action {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px dashed #0f766e;
+  border-radius: 16px;
+  background: #ecfdf5;
+}
+
+.provider-action h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #065f46;
+}
+
+.provider-action p {
+  margin: 0 0 16px;
+  color: #047857;
+  font-size: 0.95rem;
+}
+
+.provider-status-card {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #bbf7d0;
+  border-radius: 16px;
+  background: #f0fdf4;
+}
+
+.provider-status-badge {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.provider-status-badge h3 {
+  margin-top: 0;
+  margin-bottom: 4px;
+  color: #166534;
+  font-size: 1.1rem;
+}
+
+.provider-status-badge p {
+  margin: 0;
+  color: #15803d;
+  font-size: 0.95rem;
+}
+
+.badge-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.btn-primary {
+  padding: 12px 18px;
+  background-color: #0f766e;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #115e59;
 .categories-section p {
   color: #64748b;
   margin-bottom: 32px;
