@@ -27,6 +27,7 @@ export default function Home() {
     navigate('/login');
   };
 
+  const isProvider = userRole === 'PRESTADOR';
   const handleCategoryClick = (categoryId: string) => {
     navigate(`/servicos?categoria=${categoryId}`);
   };
@@ -88,6 +89,26 @@ export default function Home() {
               </Link>
             )}
           </div>
+
+          {isProvider ? (
+            <div className="provider-status-card">
+              <div className="provider-status-badge">
+                <span className="badge-icon">✅</span>
+                <div>
+                  <h3>Você é um Prestador de Serviços!</h3>
+                  <p>Seu perfil de prestador está ativo no sistema. Você pode oferecer serviços e receber solicitações de clientes.</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="provider-action">
+              <h3>Deseja oferecer seus serviços?</h3>
+              <p>Complete seu cadastro como prestador de serviços para divulgar suas especialidades e áreas de atendimento.</p>
+              <button onClick={() => navigate('/become-provider')} className="btn-primary">
+                Tornar-se Prestador
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
