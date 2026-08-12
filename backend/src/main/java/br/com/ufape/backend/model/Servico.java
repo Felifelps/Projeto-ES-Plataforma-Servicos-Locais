@@ -1,5 +1,6 @@
 package br.com.ufape.backend.model;
 
+import br.com.ufape.backend.enums.FormaCobranca;
 import jakarta.persistence.*;
 
 @Entity

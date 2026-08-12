@@ -1,4 +1,4 @@
-package br.com.ufape.backend.model;
+package br.com.ufape.backend.enums;
 
 public enum FormaCobranca {
     POR_HORA,
