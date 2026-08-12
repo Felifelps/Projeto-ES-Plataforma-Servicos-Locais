@@ -3,14 +3,14 @@ import { authService } from '../../services/auth.service';
 import './Home.css';
 import Logo from '../../components/Logo/Logo';
 
-// Lista de categorias de serviços em destaque
+// Lista de categorias de serviços em destaque (id deve corresponder ao nome da categoria no backend)
 const CATEGORIES = [
-  { id: 'eletrica', name: 'Elétrica', icon: '⚡' },
-  { id: 'hidraulica', name: 'Encanamento', icon: '🚰' },
-  { id: 'pintura', name: 'Pintura', icon: '🎨' },
-  { id: 'limpeza', name: 'Limpeza', icon: '🧹' },
-  { id: 'jardinagem', name: 'Jardinagem', icon: '🌱' },
-  { id: 'reformas', name: 'Reformas Geral', icon: '🔨' },
+  { id: 'Eletricista', name: 'Elétrica', icon: '⚡' },
+  { id: 'Encanador', name: 'Encanamento', icon: '🚰' },
+  { id: 'Pintor', name: 'Pintura', icon: '🎨' },
+  { id: 'Diarista', name: 'Limpeza', icon: '🧹' },
+  { id: 'Jardineiro', name: 'Jardinagem', icon: '🌱' },
+  { id: 'Pedreiro', name: 'Reformas Geral', icon: '🔨' },
 ];
 
 export default function Home() {
