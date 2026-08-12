@@ -43,7 +43,7 @@ export default function Login() {
         password: data.password,
       });
 
-      navigate('/home');
+      navigate('/');
     } catch (err) {
       console.error('Erro no login:', err);
 
