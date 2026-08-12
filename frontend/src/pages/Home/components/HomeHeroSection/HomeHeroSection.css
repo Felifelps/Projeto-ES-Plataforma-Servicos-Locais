@@ -1,0 +1,94 @@
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #ffffff;
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-content h1 {
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  font-size: 18px;
+  color: #94a3b8;
+  margin-bottom: 32px;
+}
+
+.hero-ctas {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.btn-hero-primary {
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s, background-color 0.2s;
+}
+
+.btn-hero-primary {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.btn-hero-primary:hover {
+  background-color: #1d4ed8;
+}
+.btn-hero-worker {
+  background-color: #10b981;
+  color: #ffffff;
+}
+
+.btn-hero-worker:hover {
+  background-color: #059669;
+}
+
+.btn-hero-secondary {
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  color: #ffffff;
+  border: 1px solid #475569;
+  text-decoration: none;
+}
+.provider-status-card {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #bbf7d0;
+  border-radius: 16px;
+  background: #f0fdf4;
+}
+
+.provider-status-badge {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.provider-status-badge h3 {
+  margin-top: 0;
+  margin-bottom: 4px;
+  color: #166534;
+  font-size: 1.1rem;
+}
+
+.provider-status-badge p {
+  margin: 0;
+  color: #15803d;
+  font-size: 0.95rem;
+}
