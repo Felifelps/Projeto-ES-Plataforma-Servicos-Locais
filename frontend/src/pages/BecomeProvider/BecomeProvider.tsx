@@ -52,22 +52,8 @@ export default function BecomeProvider() {
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
-    getValues,
     formState: { errors, touchedFields },
   } = methods;
-
-  const selectedCategories = watch('categories') || [];
-
-  const toggleCategory = (categoryName: string) => {
-    const current = getValues('categories') || [];
-    const updated = current.includes(categoryName)
-      ? current.filter((c) => c !== categoryName)
-      : [...current, categoryName];
-
-    setValue('categories', updated, { shouldValidate: true, shouldTouch: true });
-  };
 
   const onSubmit = async (data: ProviderFormData) => {
     setLoading(true);
