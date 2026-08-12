@@ -1,6 +1,6 @@
 package br.com.ufape.backend.dto;
 
-import br.com.ufape.backend.model.FormaCobranca;
+import br.com.ufape.backend.enums.FormaCobranca;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

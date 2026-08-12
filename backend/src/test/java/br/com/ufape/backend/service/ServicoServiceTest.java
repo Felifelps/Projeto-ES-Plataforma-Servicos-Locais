@@ -1,5 +1,6 @@
 package br.com.ufape.backend.service;
 
+import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
 import br.com.ufape.backend.model.*;
 import br.com.ufape.backend.repository.ProviderProfileRepository;
@@ -13,9 +14,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.server.ResponseStatusException;
+
+import br.com.ufape.backend.enums.FormaCobranca;
 
 import java.util.Optional;
 
@@ -91,5 +97,45 @@ class ServicoServiceTest {
         assertEquals("Instalação de Fiação", resultado.getTitulo());
         assertEquals("Eletricista", resultado.getCategoria().getName());
         assertEquals(perfil, resultado.getPrestador());
+    }
+
+
+    @Test
+    void deveRetornarDetalhesDoServicoQuandoIdExistir() {
+        Long idBusca = 1L;
+        ProviderProfile perfil = new ProviderProfile();
+        User usuario = new User();
+        usuario.setName("Rafael Teste");
+        perfil.setUser(usuario);
+        
+        ServiceCategory categoria = new ServiceCategory("Eletricista");
+        
+        Servico servicoMock = new Servico();
+        ReflectionTestUtils.setField(servicoMock, "id", idBusca);
+        servicoMock.setTitulo("Instalação de Fiação");
+        servicoMock.setCategoria(categoria);
+        servicoMock.setPrestador(perfil);
+        servicoMock.setFormaCobranca(FormaCobranca.VALOR_FIXO_TOTAL);
+
+        when(servicoRepository.findById(idBusca)).thenReturn(Optional.of(servicoMock));
+
+        ServicoDetalheResponseDto resultado = servicoService.buscarPorId(idBusca);
+
+        assertNotNull(resultado);
+        assertEquals("Instalação de Fiação", resultado.titulo());
+        assertEquals("Rafael Teste", resultado.nomePrestador());
+    }
+
+    @Test
+    void deveLancarErro404QuandoServicoNaoExistir() {
+        Long idInexistente = 99L;
+        when(servicoRepository.findById(idInexistente)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+            ResponseStatusException.class, 
+            () -> servicoService.buscarPorId(idInexistente)
+        );
+        
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
     }
 }

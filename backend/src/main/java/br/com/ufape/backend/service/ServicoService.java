@@ -11,6 +11,12 @@ import br.com.ufape.backend.repository.ServicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+import java.util.List;
+import java.util.stream.Collectors;
+import br.com.ufape.backend.dto.ServicoResumoResponseDto;
+import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 
 @Service
 public class ServicoService {
@@ -46,4 +52,37 @@ public class ServicoService {
 
         return servicoRepository.save(servico);
     }
+
+    public List<ServicoResumoResponseDto> buscar(String categoria, String cidade, String bairro) {
+    List<Servico> servicos = servicoRepository.buscarComFiltrosOpcionais(categoria, cidade, bairro);
+
+    return servicos.stream().map(s -> new ServicoResumoResponseDto(
+            s.getId(),
+            s.getTitulo(),
+            s.getCategoria().getName(),
+            s.getLocalizacao(), 
+            s.getAreaAtendimento(), 
+            s.getPrestador().getUser().getName()
+    )).collect(Collectors.toList());
+}
+
+    public ServicoDetalheResponseDto buscarPorId(Long id) {
+    Servico s = servicoRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Serviço não encontrado"));
+
+    return new ServicoDetalheResponseDto(
+            s.getId(),
+            s.getTitulo(),
+            s.getDescricao(),
+            s.getCategoria().getName(),
+            s.getLocalizacao(),
+            s.getAreaAtendimento(),
+            s.getFormaCobranca(),
+            s.getPrestador().getUser().getName(),
+            s.getPrestador().getPhones().isEmpty() ? "Não informado" : s.getPrestador().getPhones().get(0),
+            s.getPrestador().getDescription()
+    );
+}
+
+    
 }
