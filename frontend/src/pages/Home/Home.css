@@ -58,7 +58,6 @@
   color: #166534;
 }
 
-.btn-logout {
 /* Botões padrão */
 .btn-primary {
   padding: 8px 16px;
@@ -123,13 +122,6 @@
   flex-wrap: wrap;
 }
 
-.welcome-card {
-  width: 100%;
-  max-width: 600px;
-  background: #ffffff;
-  padding: 32px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 .btn-hero-primary,
 .btn-hero-worker {
   padding: 14px 28px;
@@ -150,12 +142,6 @@
   background-color: #1d4ed8;
 }
 
-.status-box {
-  margin-top: 24px;
-  padding: 16px 20px;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
 .btn-hero-worker {
   background-color: #10b981;
   color: #ffffff;
@@ -262,6 +248,8 @@
 
 .btn-primary:hover {
   background-color: #115e59;
+}
+
 .categories-section p {
   color: #64748b;
   margin-bottom: 32px;
@@ -269,7 +257,8 @@
 
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, 140px);
+  justify-content: center;
   gap: 20px;
 }
 
