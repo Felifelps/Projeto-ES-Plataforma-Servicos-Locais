@@ -54,7 +54,10 @@ public class ServicoService {
     }
 
     public List<ServicoResumoResponseDto> buscar(String categoria, String cidade, String bairro) {
-    List<Servico> servicos = servicoRepository.buscarComFiltrosOpcionais(categoria, cidade, bairro);
+    String categoriaLower = categoria != null ? categoria.toLowerCase() : null;
+    String cidadeLike = cidade != null ? "%" + cidade.toLowerCase() + "%" : null;
+    String bairroLike = bairro != null ? "%" + bairro.toLowerCase() + "%" : null;
+    List<Servico> servicos = servicoRepository.buscarComFiltrosOpcionais(categoriaLower, cidadeLike, bairroLike);
 
     return servicos.stream().map(s -> new ServicoResumoResponseDto(
             s.getId(),
