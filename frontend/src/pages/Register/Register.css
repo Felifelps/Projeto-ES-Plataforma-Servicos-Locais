@@ -91,7 +91,7 @@
   border: 1px solid #bbf7d0;
 }
 
-.btn-submit {
+.btn {
   width: 100%;
   padding: 12px;
   background-color: #2563eb;
@@ -104,11 +104,11 @@
   transition: background-color 0.2s;
 }
 
-.btn-submit:hover:not(:disabled) {
+.btn:hover:not(:disabled) {
   background-color: #1d4ed8;
 }
 
-.btn-submit:disabled {
+.btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }

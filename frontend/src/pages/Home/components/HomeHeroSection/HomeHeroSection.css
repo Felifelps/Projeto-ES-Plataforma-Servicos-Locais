@@ -16,11 +16,12 @@
   font-weight: 800;
   margin-bottom: 16px;
   line-height: 1.2;
+  color: #ffffff !important; 
 }
 
 .hero-subtitle {
   font-size: 18px;
-  color: #94a3b8;
+  color: #e2e8f0; 
   margin-bottom: 32px;
 }
 

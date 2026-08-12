@@ -112,7 +112,7 @@ export default function Login() {
           </div>
 
           {/* Botão Submit */}
-          <button type="submit" className="btn-submit" disabled={loading}>
+          <button type="submit" className="btn" disabled={loading}>
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
