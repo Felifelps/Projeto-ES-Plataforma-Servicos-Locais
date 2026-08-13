@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import CadastroServico from '../pages/CadastroServico/CadastroServico';
 import Login from '../pages/Login/Login';
 import Register from '../pages/Register/Register';
 import Home from '../pages/Home/Home';
@@ -20,6 +21,10 @@ export default function AppRoutes() {
         <Route path="/become-provider" element={<BecomeProvider />} />
         <Route path="/servicos" element={<Servicos />} />
         <Route path="/servicos/:id" element={<ServicoDetalhe />} />
+      </Route>
+
+      <Route element={<PrivateRoute allowedRoles={['PRESTADOR']} requireRole />}>
+        <Route path="/servicos/cadastrar" element={<CadastroServico />} />
       </Route>
 
       {/* Redirecionamento para rota não encontrada ou padrão */}
