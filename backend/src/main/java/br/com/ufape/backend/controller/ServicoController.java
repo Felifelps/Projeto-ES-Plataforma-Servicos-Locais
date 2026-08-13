@@ -1,15 +1,18 @@
 package br.com.ufape.backend.controller;
 
+import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
+import br.com.ufape.backend.dto.ServicoResumoResponseDto;
 import br.com.ufape.backend.model.Servico;
+import br.com.ufape.backend.model.User;
 import br.com.ufape.backend.service.ServicoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import br.com.ufape.backend.dto.ServicoResumoResponseDto;
-import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
+
 import java.util.List;
 
 @RestController
@@ -24,22 +27,31 @@ public class ServicoController {
         Servico servicoSalvo = servicoService.cadastrarServico(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(servicoSalvo);
     }
-    
 
+    // Busca os serviços com base nos filtros fornecidos (categoria, cidade, bairro)
     @GetMapping
     public ResponseEntity<List<ServicoResumoResponseDto>> buscarServicos(
-        @RequestParam(required = false) String categoria,
-        @RequestParam(required = false) String cidade,
-        @RequestParam(required = false) String bairro) {
-    
+            @RequestParam(required = false) String categoria,
+            @RequestParam(required = false) String cidade,
+            @RequestParam(required = false) String bairro) {
+
         List<ServicoResumoResponseDto> resultados = servicoService.buscar(categoria, cidade, bairro);
         return ResponseEntity.ok(resultados);
-}
+    }
 
+    // Busca os serviços apenas do prestador autenticado
+    @GetMapping("/meus-servicos")
+    public ResponseEntity<List<ServicoResumoResponseDto>> listarMeusServicos(
+            @AuthenticationPrincipal User usuarioAutenticado) {
+
+        List<ServicoResumoResponseDto> meusServicos = servicoService.buscarPorPrestador(usuarioAutenticado.getId());
+        return ResponseEntity.ok(meusServicos);
+    }
+
+    // Busca os detalhes de um serviço específico pelo ID
     @GetMapping("/{id}")
-    public ResponseEntity<ServicoDetalheResponseDto> buscarDetalhes(@PathVariable Long id) {    
-    // Busca pelo ID, se não achar lança exceção (que o Spring converte para 404)
+    public ResponseEntity<ServicoDetalheResponseDto> buscarDetalhes(@PathVariable Long id) {
         ServicoDetalheResponseDto detalhe = servicoService.buscarPorId(id);
         return ResponseEntity.ok(detalhe);
-}       
+    }
 }

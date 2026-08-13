@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ServicoRepository extends JpaRepository<Servico, Long> {
+    
     @Query("SELECT s FROM Servico s WHERE " +
        "(:categoria IS NULL OR LOWER(s.categoria.name) = :categoria) AND " +
        "(:cidade IS NULL OR LOWER(s.areaAtendimento) LIKE :cidade) AND " +
@@ -17,4 +18,5 @@ public interface ServicoRepository extends JpaRepository<Servico, Long> {
         @Param("bairro") String bairro
     );
     
+    List<Servico> findByPrestadorUserId(Long usuarioId);
 }

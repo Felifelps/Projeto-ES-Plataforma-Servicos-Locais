@@ -7,6 +7,7 @@ import PrivateRoute from '../routes/PrivateRoute';
 import BecomeProvider from '../pages/BecomeProvider/BecomeProvider';
 import Servicos from '../pages/Servicos/Servicos';
 import ServicoDetalhe from '../pages/ServicoDetalhe/ServicoDetalhe';
+import MeusServicos from '../pages/MeusServicos/MeusServicos';
 
 export default function AppRoutes() {
   return (
@@ -25,6 +26,7 @@ export default function AppRoutes() {
 
       <Route element={<PrivateRoute allowedRoles={['PRESTADOR']} requireRole />}>
         <Route path="/servicos/cadastrar" element={<CadastroServico />} />
+        <Route path="/meus-servicos" element={<MeusServicos />} />
       </Route>
 
       {/* Redirecionamento para rota não encontrada ou padrão */}
