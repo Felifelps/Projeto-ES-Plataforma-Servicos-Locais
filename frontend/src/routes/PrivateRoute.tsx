@@ -3,9 +3,10 @@ import { authService } from '../services/auth.service';
 
 interface PrivateRouteProps {
     allowedRoles?: string[]; // Lista de roles permitidos para acessar a rota
+    requireRole?: boolean;
 }
 
-export default function PrivateRoute({ allowedRoles }: PrivateRouteProps) {
+export default function PrivateRoute({ allowedRoles, requireRole = false }: PrivateRouteProps) {
   const location = useLocation();
   const isAuthenticated = authService.isAuthenticated();
   const userRole = authService.getUserRole();
@@ -15,9 +16,13 @@ export default function PrivateRoute({ allowedRoles }: PrivateRouteProps) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
+  const hasInvalidRole = Boolean(
+    allowedRoles && (userRole ? !allowedRoles.includes(userRole) : requireRole),
+  );
+
+  if (hasInvalidRole) {
     // Autenticado, mas não tem a Role exigida pela história 
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // Renderiza a rota filha protegida
