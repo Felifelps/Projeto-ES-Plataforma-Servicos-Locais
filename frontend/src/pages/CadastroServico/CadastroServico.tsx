@@ -75,6 +75,9 @@ export default function CadastroServico() {
       });
       reset();
       setSuccessMessage('Serviço cadastrado com sucesso!');
+      setTimeout(() => {
+      navigate('/meus-servicos');
+    }, 1500);
     } catch (error: unknown) {
       setErrorMessage(obterMensagemErro(error));
     } finally {
