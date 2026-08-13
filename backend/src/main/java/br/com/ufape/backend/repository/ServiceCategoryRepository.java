@@ -1,6 +1,8 @@
 package br.com.ufape.backend.repository;
 
 import br.com.ufape.backend.model.ServiceCategory;
+import br.com.ufape.backend.model.Servico;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

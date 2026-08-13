@@ -30,8 +30,7 @@ export default function ServiceFilters({ initialValues, onSearch, loading }: Ser
     setCategoria('');
     setCidade('');
     setBairro('');
-    onSearch({});
-  };
+    };
 
   return (
     <form className="service-filters" onSubmit={handleSubmit}>

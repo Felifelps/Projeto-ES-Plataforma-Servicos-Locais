@@ -13,7 +13,7 @@ const formasCobrancaValidas = FORMAS_COBRANCA.map(({ valor }) => valor);
 
 const cadastroServicoSchema = z.object({
   titulo: z.string().trim().min(1, 'O título é obrigatório.'),
-  categoriaId: z.coerce.number().int().positive('A categoria é obrigatória.'),
+  categoriaId: z.coerce.number({ invalid_type_error: 'Selecione uma categoria válida.' }).pipe(z.number().min(1, 'A categoria é obrigatória.')),
   descricao: z.string().trim().min(1, 'A descrição é obrigatória.'),
   localizacao: z.string().trim().min(1, 'A localização é obrigatória.'),
   areaAtendimento: z.string().trim().min(1, 'A área de atendimento é obrigatória.'),
@@ -75,6 +75,9 @@ export default function CadastroServico() {
       });
       reset();
       setSuccessMessage('Serviço cadastrado com sucesso!');
+      setTimeout(() => {
+      navigate('/meus-servicos');
+    }, 1500);
     } catch (error: unknown) {
       setErrorMessage(obterMensagemErro(error));
     } finally {
