@@ -54,4 +54,13 @@ public class ServicoController {
         ServicoDetalheResponseDto detalhe = servicoService.buscarPorId(id);
         return ResponseEntity.ok(detalhe);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(
+        @PathVariable Long id,
+        @AuthenticationPrincipal User usuarioAutenticado) {
+
+        servicoService.deletarServico(id, usuarioAutenticado.getId());
+        return ResponseEntity.noContent().build(); // Retorna 204 No Content
+}
 }

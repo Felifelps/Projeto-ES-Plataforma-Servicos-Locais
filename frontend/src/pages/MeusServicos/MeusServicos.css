@@ -140,19 +140,21 @@
   overflow: hidden;
 }
 
-/* Detalhes do Serviço */
-.service-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  padding-top: 1rem;
-  border-top: 1px solid #f1f5f9;
-  font-size: 0.875rem;
-  color: #64748b;
+.btn-delete {
+  background-color: transparent;
+  color: #ef4444;
+  border: 1px solid #fca5a5;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.service-details strong {
-  color: #334155;
+.btn-delete:hover {
+  background-color: #fef2f2;
+  border-color: #ef4444;
 }
 
 /* Alerta de Erro */

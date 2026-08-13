@@ -29,6 +29,21 @@ export default function MeusServicos() {
     carregarServicos();
   }, []);
 
+  const handleDeletar = async (id: number) => {
+    const confirmou = window.confirm('Tem certeza que deseja excluir este serviço? Esta ação não pode ser desfeita.');
+    if (!confirmou) return;
+
+    try {
+      await cadastroServicoService.deletar(id);
+      // 🟢 Remove o serviço da lista do estado local instantaneamente
+      setServicos((servicosAnteriores) => servicosAnteriores.filter((s) => s.id !== id));
+      navigate('/meus-servicos'); // Redireciona para a página de serviços após a exclusão
+    } catch (error) {
+      console.error('Erro ao deletar serviço:', error);
+      alert('Não foi possível excluir o serviço. Tente novamente.');
+    }
+};
+
   return (
     <main className="my-services-page">
       <section className="my-services-container">
@@ -68,8 +83,15 @@ export default function MeusServicos() {
               <div key={servico.id} className="service-card" onClick={() => navigate(`/servicos/${servico.id}`)}>
                 <h3>{servico.titulo}</h3>
                 <p>{servico.descricao}</p>
-                <div className="service-details">
-                </div>
+            <div className="service-card-actions">
+                <button 
+                  type="button" 
+                  className="btn-delete"
+                  onClick={() => handleDeletar(servico.id)}
+                >
+                  Excluir
+                </button>
+              </div>
               </div>
             ))}
           </div>

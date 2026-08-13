@@ -10,6 +10,8 @@ import br.com.ufape.backend.model.User;
 import br.com.ufape.backend.repository.ProviderProfileRepository;
 import br.com.ufape.backend.repository.ServiceCategoryRepository;
 import br.com.ufape.backend.repository.ServicoRepository;
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -100,4 +102,16 @@ public class ServicoService {
                 s.getPrestador().getDescription()
         );
     }
+
+    @Transactional
+     public void deletarServico(Long servicoId, Long usuarioId) {
+        Servico servico = servicoRepository.findById(servicoId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Serviço não encontrado"));
+                
+        if (!servico.getPrestador().getUser().getId().equals(usuarioId)) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para excluir este serviço.");
+        }
+
+        servicoRepository.delete(servico);
+}       
 }
