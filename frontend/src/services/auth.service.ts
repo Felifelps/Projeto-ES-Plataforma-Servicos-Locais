@@ -14,11 +14,22 @@ class AuthService {
     return response.data;
   }
 
-  // 2. Login
+  // 2. Login - LER A ROLE DO NOVO JWT
   async login(data: LoginRequest): Promise<LoginResponse> {
     const response = await api.post<LoginResponse>('/auth/login', data);
     this.storeToken(response.data.token);
-    this.clearUserRole();
+
+    // Decodifica o token recebido no login e salva a role formatada
+    const payload = this.decodeToken(response.data.token);
+    const rawRole = payload?.role || payload?.roles?.[0] || payload?.authorities?.[0];
+    const formattedRole = this.normalizeRole(rawRole);
+
+    if (formattedRole) {
+      this.setUserRole(formattedRole);
+    } else {
+      this.clearUserRole();
+    }
+
     return response.data;
   }
 
@@ -27,28 +38,37 @@ class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
-  // 4. Obter Role/Perfil do usuário via localStorage ou JWT
+  // 4. Obter Role do usuário
   getUserRole(): string | null {
     const storedRole = localStorage.getItem(this.roleKey);
     if (storedRole) {
-      return storedRole;
+      return this.normalizeRole(storedRole);
     }
+
     const token = this.getToken();
     if (!token) return null;
 
     const payload = this.decodeToken(token);
-    return payload?.role || payload?.roles?.[0] || null;
+    const rawRole = payload?.role || payload?.roles?.[0] || payload?.authorities?.[0];
+
+    return this.normalizeRole(rawRole);
   }
 
   setUserRole(role: string): void {
-    localStorage.setItem(this.roleKey, role);
+    localStorage.setItem(this.roleKey, this.normalizeRole(role) || role);
   }
 
   clearUserRole(): void {
     localStorage.removeItem(this.roleKey);
   }
 
-  // 5. Validar expiração
+  // Helper para remover o prefixo 'ROLE_' do Spring Security caso ele exista
+  private normalizeRole(role: string | undefined | null): string | null {
+    if (!role) return null;
+    return role.replace(/^ROLE_/, '');
+  }
+
+  // 5. Validar autenticação
   isAuthenticated(): boolean {
     const token = this.getToken();
     if (!token) return false;
@@ -83,14 +103,10 @@ class AuthService {
   async logout(): Promise<void> {
     const token = this.getToken();
 
-    if (!token) {
-      this.clearToken();
-      this.clearUserRole();
-      return;
-    }
-
     try {
-      await api.post('/auth/logout', {});
+      if (token) {
+        await api.post('/auth/logout', {});
+      }
     } catch (error) {
       console.error('Erro ao realizar logout no servidor:', error);
     } finally {
@@ -111,7 +127,9 @@ class AuthService {
     localStorage.removeItem(this.tokenKey);
   }
 
-  private decodeToken(token: string): { exp?: number; role?: string; roles?: string[]; name?: string } | null {
+  private decodeToken(
+    token: string,
+  ): { exp?: number; role?: string; roles?: string[]; authorities?: string[]; name?: string } | null {
     try {
       const payload = token.split('.')[1];
       const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));

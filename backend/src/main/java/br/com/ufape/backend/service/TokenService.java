@@ -32,6 +32,7 @@ public class TokenService {
                     .withIssuer("housing")
                     .withSubject(user.getEmail())
                     .withClaim("name", user.getName())
+                    .withClaim("role", user.getRole().name())
                     .withExpiresAt(LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00")))
                     .sign(algorithm);
         }catch (JWTCreationException exception){
