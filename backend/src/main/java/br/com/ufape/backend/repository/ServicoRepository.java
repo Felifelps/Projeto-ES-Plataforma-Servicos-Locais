@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface ServicoRepository extends JpaRepository<Servico, Long> {
     @Query("SELECT s FROM Servico s WHERE " +
-       "(:categoria IS NULL OR s.categoria.name = :categoria) AND " +
-       "(:cidade IS NULL OR s.areaAtendimento LIKE %:cidade%) AND " +
-       "(:bairro IS NULL OR s.localizacao LIKE %:bairro%)")
+       "(:categoria IS NULL OR LOWER(s.categoria.name) = :categoria) AND " +
+       "(:cidade IS NULL OR LOWER(s.areaAtendimento) LIKE :cidade) AND " +
+       "(:bairro IS NULL OR LOWER(s.localizacao) LIKE :bairro)")
     List<Servico> buscarComFiltrosOpcionais(
         @Param("categoria") String categoria, 
         @Param("cidade") String cidade, 

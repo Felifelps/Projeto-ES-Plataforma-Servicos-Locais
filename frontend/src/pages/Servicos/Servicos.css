@@ -1,0 +1,108 @@
+.servicos-topbar {
+  padding: 16px 32px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.servicos-page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+.servicos-header,
+.service-filters,
+.servicos-status,
+.servicos-grid,
+.servicos-page .alert {
+  width: min(100%, 1080px);
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+.servicos-header {
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.servicos-header h1 {
+  margin: 0 0 8px;
+  font-size: 2rem;
+  color: #111827;
+}
+
+.servicos-header p {
+  color: #4b5563;
+}
+
+.servicos-status {
+  padding: 40px 20px;
+  text-align: center;
+  color: #6b7280;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.servicos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.servico-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.servico-card:hover {
+  border-color: #0f766e;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.servico-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #111827;
+}
+
+.servico-categoria {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #ecfdf5;
+  color: #065f46;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.servico-local,
+.servico-prestador {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+.alert {
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+.alert-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
