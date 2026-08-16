@@ -52,10 +52,10 @@ class ServicoServiceTest {
         usuarioMock.setEmail("rafael@teste.com");
 
         Authentication authentication = Mockito.mock(Authentication.class);
-        when(authentication.getPrincipal()).thenReturn(usuarioMock);
+        Mockito.lenient().when(authentication.getPrincipal()).thenReturn(usuarioMock);
 
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.lenient().when(securityContext.getAuthentication()).thenReturn(authentication);
 
         SecurityContextHolder.setContext(securityContext);
     }
@@ -107,7 +107,8 @@ class ServicoServiceTest {
         User usuario = new User();
         usuario.setName("Rafael Teste");
         perfil.setUser(usuario);
-        
+        perfil.setPhones(java.util.List.of("81999999999"));
+
         ServiceCategory categoria = new ServiceCategory("Eletricista");
         
         Servico servicoMock = new Servico();
@@ -124,6 +125,31 @@ class ServicoServiceTest {
         assertNotNull(resultado);
         assertEquals("Instalação de Fiação", resultado.titulo());
         assertEquals("Rafael Teste", resultado.nomePrestador());
+        assertEquals("81999999999", resultado.telefonePrestador());
+    }
+
+    @Test
+    void deveRetornarTelefoneNaoInformadoQuandoPrestadorNaoTiverTelefone() {
+        Long idBusca = 1L;
+        ProviderProfile perfil = new ProviderProfile();
+        User usuario = new User();
+        usuario.setName("Rafael Teste");
+        perfil.setUser(usuario);
+
+        ServiceCategory categoria = new ServiceCategory("Eletricista");
+
+        Servico servicoMock = new Servico();
+        ReflectionTestUtils.setField(servicoMock, "id", idBusca);
+        servicoMock.setTitulo("Instalação de Fiação");
+        servicoMock.setCategoria(categoria);
+        servicoMock.setPrestador(perfil);
+        servicoMock.setFormaCobranca(FormaCobranca.VALOR_FIXO_TOTAL);
+
+        when(servicoRepository.findById(idBusca)).thenReturn(Optional.of(servicoMock));
+
+        ServicoDetalheResponseDto resultado = servicoService.buscarPorId(idBusca);
+
+        assertEquals("Não informado", resultado.telefonePrestador());
     }
 
     @Test

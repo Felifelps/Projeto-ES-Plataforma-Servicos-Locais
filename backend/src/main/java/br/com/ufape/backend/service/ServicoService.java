@@ -98,7 +98,8 @@ public class ServicoService {
                 s.getAreaAtendimento(),
                 s.getFormaCobranca(),
                 s.getPrestador().getUser().getName(),
-                s.getPrestador().getPhones().isEmpty() ? "Não informado" : s.getPrestador().getPhones().get(0),
+                (s.getPrestador().getPhones() == null || s.getPrestador().getPhones().isEmpty())
+                        ? "Não informado" : s.getPrestador().getPhones().get(0),
                 s.getPrestador().getDescription()
         );
     }
