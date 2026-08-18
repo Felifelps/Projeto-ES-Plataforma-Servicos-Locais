@@ -1,4 +1,5 @@
 package br.com.ufape.backend.dto;
+import java.math.BigDecimal;
 
 public record OrcamentoResponseDto(
         Long id,
@@ -9,5 +10,8 @@ public record OrcamentoResponseDto(
         String tituloServico,
         String nomePrestador,
         String nomeSolicitante,
-        String emailSolicitante
+        String emailSolicitante,
+        String descricao_resposta,
+        String status_resposta,
+        BigDecimal valor_resposta
 ) {}

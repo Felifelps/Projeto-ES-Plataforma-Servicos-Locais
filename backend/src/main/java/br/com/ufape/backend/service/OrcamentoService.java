@@ -1,6 +1,7 @@
 package br.com.ufape.backend.service;
 
 import br.com.ufape.backend.dto.OrcamentoRequestDto;
+import br.com.ufape.backend.dto.OrcamentoResponderRequestDto;
 import br.com.ufape.backend.dto.OrcamentoResponseDto;
 import br.com.ufape.backend.model.Orcamento;
 import br.com.ufape.backend.model.ProviderProfile;
@@ -11,6 +12,7 @@ import br.com.ufape.backend.repository.ServicoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -61,7 +63,37 @@ public class OrcamentoService {
                 o.getServico().getTitulo(),
                 o.getPrestador().getUser().getName(),
                 o.getSolicitante().getName(),
-                o.getSolicitante().getEmail()
+                o.getSolicitante().getEmail(),
+                o.getDescricao_resposta(),
+                o.getStatus_resposta(),
+                o.getValor_resposta()
         );
+    }
+
+    @Transactional
+    public OrcamentoResponseDto responder(Long orcamentoId, User prestadorAutenticado, OrcamentoResponderRequestDto dto) {
+        
+        // lanca Erro 404
+        Orcamento orcamento = orcamentoRepository.findById(orcamentoId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Orçamento não encontrado"));
+
+        //  lanca Erro 403
+        Long idDonoDoOrcamento = orcamento.getPrestador().getUser().getId();
+        if (!idDonoDoOrcamento.equals(prestadorAutenticado.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para responder a este orçamento");
+        }
+
+        // lanca Erro 400
+        if ("RESPONDIDO".equals(orcamento.getStatus_resposta())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Este orçamento já foi respondido");
+        }
+
+        orcamento.setValor_resposta(dto.valor_resposta());
+        orcamento.setDescricao_resposta(dto.descricao_resposta());
+        orcamento.setStatus_resposta("RESPONDIDO");
+
+        Orcamento orcamentoAtualizado = orcamentoRepository.save(orcamento);
+
+        return toResponseDto(orcamentoAtualizado);
     }
 }
