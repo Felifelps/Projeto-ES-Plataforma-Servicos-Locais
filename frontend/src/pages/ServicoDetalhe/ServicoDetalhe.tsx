@@ -82,6 +82,7 @@ export default function ServicoDetalhe() {
               <h2>Prestador</h2>
               <p className="servico-prestador-nome">{servico.nomePrestador}</p>
               <p>Telefone: {servico.telefonePrestador}</p>
+              <h2>Sobre o Prestador</h2>
               {servico.descricaoPrestador && <p>{servico.descricaoPrestador}</p>}
             </div>
           </section>
