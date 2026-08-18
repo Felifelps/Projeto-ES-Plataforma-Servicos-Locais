@@ -8,6 +8,7 @@ import BecomeProvider from '../pages/BecomeProvider/BecomeProvider';
 import Servicos from '../pages/Servicos/Servicos';
 import ServicoDetalhe from '../pages/ServicoDetalhe/ServicoDetalhe';
 import MeusServicos from '../pages/MeusServicos/MeusServicos';
+import SolicitarOrcamento from '../pages/SolicitarOrcamento/SolicitarOrcamento';
 
 export default function AppRoutes() {
   return (
@@ -22,6 +23,10 @@ export default function AppRoutes() {
         <Route path="/become-provider" element={<BecomeProvider />} />
         <Route path="/servicos" element={<Servicos />} />
         <Route path="/servicos/:id" element={<ServicoDetalhe />} />
+        <Route
+          path="/servicos/:id/solicitar-orcamento"
+          element={<SolicitarOrcamento />}
+        />
       </Route>
 
       <Route element={<PrivateRoute allowedRoles={['PRESTADOR']} requireRole />}>

@@ -84,6 +84,16 @@ export default function ServicoDetalhe() {
               <p>Telefone: {servico.telefonePrestador}</p>
               {servico.descricaoPrestador && <p>{servico.descricaoPrestador}</p>}
             </div>
+
+            <div className="servico-acoes">
+              <button
+                type="button"
+                className="btn-solicitar-orcamento"
+                onClick={() => navigate(`/servicos/${servico.id}/solicitar-orcamento`)}
+              >
+                Solicitar orçamento
+              </button>
+            </div>
           </section>
         )}
       </main>
