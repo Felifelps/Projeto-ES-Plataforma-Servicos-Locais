@@ -1,6 +1,7 @@
 package br.com.ufape.backend.service;
 
 import br.com.ufape.backend.dto.OrcamentoRequestDto;
+import br.com.ufape.backend.dto.OrcamentoResponderRequestDto;
 import br.com.ufape.backend.dto.OrcamentoResponseDto;
 import br.com.ufape.backend.model.*;
 import br.com.ufape.backend.repository.OrcamentoRepository;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -127,5 +129,35 @@ class OrcamentoServiceTest {
 
         assertEquals(1, resultado.size());
         assertEquals("Cliente Teste", resultado.get(0).nomeSolicitante());
+    }
+
+    @Test
+    void deveResponderOrcamentoComSucesso() {
+        configurarServicoValido(); 
+        
+        User prestadorAutenticado = prestador.getUser();
+        ReflectionTestUtils.setField(prestadorAutenticado, "id", 7L); 
+
+        Orcamento orcamentoNoBanco = new Orcamento();
+        ReflectionTestUtils.setField(orcamentoNoBanco, "id", 1L);
+        orcamentoNoBanco.setPrestador(prestador);
+        orcamentoNoBanco.setSolicitante(solicitante);
+        orcamentoNoBanco.setServico(servico);
+        orcamentoNoBanco.setStatus_resposta("PENDENTE");
+
+        OrcamentoResponderRequestDto dto = new OrcamentoResponderRequestDto(
+                new BigDecimal("500.00"), 
+                "Consigo fazer o serviço na quinta-feira"
+        );
+
+        when(orcamentoRepository.findById(1L)).thenReturn(Optional.of(orcamentoNoBanco));
+        when(orcamentoRepository.save(any(Orcamento.class))).thenAnswer(i -> i.getArgument(0));
+
+        OrcamentoResponseDto resultado = orcamentoService.responder(1L, prestadorAutenticado, dto);
+
+        assertNotNull(resultado);
+        assertEquals("RESPONDIDO", resultado.status_resposta());
+        assertEquals(new BigDecimal("500.00"), resultado.valor_resposta());
+        assertEquals("Consigo fazer o serviço na quinta-feira", resultado.descricao_resposta());
     }
 }
