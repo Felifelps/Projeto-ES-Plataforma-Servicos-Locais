@@ -9,7 +9,7 @@ export interface OrcamentoResponse {
   nomeSolicitante: string;
   emailSolicitante: string;
   //Campos opcionais
-  valor?: number;
-  condicoes?: string;
-  respondido?: boolean;
+  descricao_resposta?: string;
+  status_resposta?: string;
+  valor_resposta?: number;
 }

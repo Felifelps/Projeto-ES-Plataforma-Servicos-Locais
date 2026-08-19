@@ -85,8 +85,8 @@ export default function OrcamentosRecebidos() {
     setSucessoFeedback('');
     setErroFeedback('');
     reset({
-      valor: orcamento.valor,
-      condicoes: orcamento.condicoes || '',
+      valor: orcamento.valor_resposta,
+      condicoes: orcamento.descricao_resposta || '',
     });
   };
 
@@ -180,15 +180,15 @@ export default function OrcamentosRecebidos() {
                     <p>{orcamento.descricaoNecessidade}</p>
                   </div>
 
-                  {(orcamento.valor !== undefined || orcamento.condicoes) && (
+                  {(orcamento.valor_resposta !== undefined || orcamento.descricao_resposta) && (
                     <div className="orcamento-resposta-box">
                       <strong>Sua resposta:</strong>
-                      {orcamento.valor !== undefined && (
+                      {orcamento.valor_resposta !== undefined && (
                         <p>
-                          Valor: {orcamento.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                          Valor: {orcamento.valor_resposta.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                         </p>
                       )}
-                      {orcamento.condicoes && <p>Condições: {orcamento.condicoes}</p>}
+                      {orcamento.descricao_resposta && <p>Descrição: {orcamento.descricao_resposta}</p>}
                     </div>
                   )}
 
@@ -198,7 +198,7 @@ export default function OrcamentosRecebidos() {
                       className="btn-primary"
                       onClick={() => abrirModalResposta(orcamento)}
                     >
-                      {orcamento.valor !== undefined || orcamento.condicoes
+                      {orcamento.valor_resposta !== undefined || orcamento.descricao_resposta
                         ? 'Editar resposta'
                         : 'Responder orçamento'}
                     </button>

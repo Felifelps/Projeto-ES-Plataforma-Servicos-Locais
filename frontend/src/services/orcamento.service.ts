@@ -9,6 +9,7 @@ class OrcamentoService {
     return response.data;
   }
 
+  //PRESTADOR
   //1. Listar orçamentos recebidos
   async listarOrcamentosRecebidos(): Promise<OrcamentoResponse[]> {
     const response = await api.get<OrcamentoResponse[]>('/orcamentos/recebidos');
@@ -18,6 +19,24 @@ class OrcamentoService {
   //2. Responder a um orçamento
   async responderOrcamento(id: number, data: OrcamentoRespostaRequest): Promise<OrcamentoResponse> {
     const response = await api.put<OrcamentoResponse>(`/orcamentos/${id}/responder`, data);
+    return response.data;
+  }
+  //CLIENTE
+  //1. Listar orçamentos solicitados
+  async listarOrcamentosSolicitados(): Promise<OrcamentoResponse[]> {
+    const response = await api.get<OrcamentoResponse[]>('/orcamentos/solicitados');
+    return response.data;
+  }
+
+  //2. Aceitar um orçamento
+  async aceitarOrcamento(id: number): Promise<OrcamentoResponse> {
+    const response = await api.put<OrcamentoResponse>(`/orcamentos/${id}/aceitar`);
+    return response.data;
+  }
+
+  //3. Recusar um orçamento
+  async recusarOrcamento(id: number): Promise<OrcamentoResponse> {
+    const response = await api.put<OrcamentoResponse>(`/orcamentos/${id}/recusar`);
     return response.data;
   }
 }
