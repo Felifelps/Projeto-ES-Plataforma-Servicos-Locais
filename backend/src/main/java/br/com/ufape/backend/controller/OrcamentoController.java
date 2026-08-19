@@ -62,5 +62,21 @@ public class OrcamentoController {
     List<OrcamentoResponseDto> solicitados = orcamentoService.buscarSolicitadosPorCliente(usuarioAutenticado.getId());
     return ResponseEntity.ok(solicitados);
 }
-    
+    @PutMapping("/{id}/aceitar")
+    public ResponseEntity<OrcamentoResponseDto> aceitarOrcamento(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User usuarioAutenticado) {
+        
+        OrcamentoResponseDto orcamentoAceito = orcamentoService.aceitar(id, usuarioAutenticado);
+        return ResponseEntity.ok(orcamentoAceito);
+    }
+
+    @PutMapping("/{id}/recusar")
+    public ResponseEntity<OrcamentoResponseDto> recusarOrcamento(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User usuarioAutenticado) {
+        
+        OrcamentoResponseDto orcamentoRecusado = orcamentoService.recusar(id, usuarioAutenticado);
+        return ResponseEntity.ok(orcamentoRecusado);
+    }
 }

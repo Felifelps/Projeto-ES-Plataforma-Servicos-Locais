@@ -51,11 +51,11 @@ export default function MeusOrcamentosSolicitados() {
         await orcamentoService.recusarOrcamento(id);
       }
 
-      // Atualiza o status localmente na listagem
+      // ✅ Atualiza status_resposta no estado local
       setOrcamentos((prev) =>
         prev.map((item) =>
           item.id === id
-            ? { ...item, status: acao === 'aceitar' ? 'ACEITO' : 'RECUSADO' }
+            ? { ...item, status_resposta: acao === 'aceitar' ? 'ACEITO' : 'RECUSADO' }
             : item
         )
       );
@@ -64,6 +64,19 @@ export default function MeusOrcamentosSolicitados() {
       alert(`Não foi possível ${acao} o orçamento. Tente novamente.`);
     } finally {
       setProcessandoId(null);
+    }
+  };
+
+  const formatarStatus = (status: string) => {
+    switch (status) {
+      case 'RESPONDIDO':
+        return 'Respondido';
+      case 'ACEITO':
+        return 'Proposta Aceita';
+      case 'RECUSADO':
+        return 'Proposta Recusada';
+      default:
+        return 'Pendente';
     }
   };
 
@@ -93,7 +106,8 @@ export default function MeusOrcamentosSolicitados() {
               {orcamentos.map((orcamento) => {
                 const temResposta =
                   orcamento.valor_resposta !== undefined || Boolean(orcamento.descricao_resposta);
-                const status = orcamento.status_resposta || (temResposta ? 'RESPONDIDO' : 'PENDENTE');
+                const status =
+                  orcamento.status_resposta || (temResposta ? 'RESPONDIDO' : 'PENDENTE');
 
                 return (
                   <article key={orcamento.id} className="orcamento-card">
@@ -102,8 +116,9 @@ export default function MeusOrcamentosSolicitados() {
                         <span className="orcamento-badge-servico">{orcamento.tituloServico}</span>
                         <h3>Prestador: {orcamento.nomePrestador}</h3>
                       </div>
-                      <span className={`badge-status ${status === 'RESPONDIDO' ? 'status-respondido' : 'status-pendente'}`}>
-                        {status === 'RESPONDIDO' ? 'Respondido' : 'Pendente'}
+                      {/* Badge com suporte a todos os status */}
+                      <span className={`badge-status status-${status.toLowerCase()}`}>
+                        {formatarStatus(status)}
                       </span>
                     </header>
 
@@ -123,7 +138,7 @@ export default function MeusOrcamentosSolicitados() {
                       <p>{orcamento.descricaoNecessidade}</p>
                     </div>
 
-                    {/* Bloco com a resposta do prestador */}
+                    {/* Proposta enviada pelo prestador */}
                     {temResposta && (
                       <div className="orcamento-proposta-box">
                         <h4>Proposta do Prestador</h4>
@@ -140,13 +155,13 @@ export default function MeusOrcamentosSolicitados() {
                         )}
                         {orcamento.descricao_resposta && (
                           <p className="proposta-condicoes">
-                            <strong>Descrição:</strong> {orcamento.descricao_resposta}
+                            <strong>Condições / Detalhes:</strong> {orcamento.descricao_resposta}
                           </p>
                         )}
                       </div>
                     )}
 
-                    {/* Ações de Aceite / Recusa (somente se respondido e ainda não decidido) */}
+                    {/* Botões de Ação (Apenas enquanto estiver RESPONDIDO) */}
                     {status === 'RESPONDIDO' && (
                       <div className="orcamento-card-actions">
                         <button
@@ -165,6 +180,18 @@ export default function MeusOrcamentosSolicitados() {
                         >
                           {processandoId === orcamento.id ? 'Processando...' : 'Aceitar Proposta'}
                         </button>
+                      </div>
+                    )}
+
+                    {/* Feedback visual quando já foi aceito ou recusado */}
+                    {status === 'ACEITO' && (
+                      <div className="status-feedback status-feedback-aceito">
+                        ✓ Você aceitou esta proposta.
+                      </div>
+                    )}
+                    {status === 'RECUSADO' && (
+                      <div className="status-feedback status-feedback-recusado">
+                        ✕ Você recusou esta proposta.
                       </div>
                     )}
                   </article>
