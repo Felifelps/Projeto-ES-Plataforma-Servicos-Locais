@@ -12,43 +12,59 @@ export default function MeusServicos() {
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
+    let ativo = true;
+
     async function carregarServicos() {
       try {
-        setLoading(true);
-        // Calls the backend to retrieve the list:
         const dados = await cadastroServicoService.listarMeusServicos();
+        if (!ativo) return;
         setServicos(dados);
+        setErrorMessage('');
       } catch (error) {
+        if (!ativo) return;
         console.error('Erro ao buscar serviços do prestador:', error);
         setErrorMessage('Não foi possível carregar a lista de serviços.');
       } finally {
-        setLoading(false);
+        if (ativo) {
+          setLoading(false);
+        }
       }
     }
 
     carregarServicos();
+
+    return () => {
+      ativo = false;
+    };
   }, []);
 
-  const handleDeletar = async (id: number) => {
-    const confirmou = window.confirm('Tem certeza que deseja excluir este serviço? Esta ação não pode ser desfeita.');
+  const handleDeletar = async (e: React.MouseEvent, id: number) => {
+    e.stopPropagation(); // Evita acionar o clique do card
+
+    const confirmou = window.confirm(
+      'Tem certeza que deseja excluir este serviço? Esta ação não pode ser desfeita.'
+    );
     if (!confirmou) return;
 
     try {
       await cadastroServicoService.deletar(id);
-      // 🟢 Remove o serviço da lista do estado local instantaneamente
       setServicos((servicosAnteriores) => servicosAnteriores.filter((s) => s.id !== id));
-      navigate('/meus-servicos'); // Redireciona para a página de serviços após a exclusão
     } catch (error) {
       console.error('Erro ao deletar serviço:', error);
       alert('Não foi possível excluir o serviço. Tente novamente.');
     }
-};
+  };
+
+  const handleVerOrcamentos = (e: React.MouseEvent, servicoId: number) => {
+    e.stopPropagation(); 
+    navigate(`/meus-servicos/orcamentos/${servicoId}`);
+  };
 
   return (
     <main className="my-services-page">
       <section className="my-services-container">
         <header className="my-services-header">
-            <Logo />
+          <Logo />
           <div>
             <h1>Meus Serviços</h1>
             <p>Gerencie os serviços oferecidos por você.</p>
@@ -80,18 +96,31 @@ export default function MeusServicos() {
         ) : (
           <div className="services-grid">
             {servicos.map((servico) => (
-              <div key={servico.id} className="service-card" onClick={() => navigate(`/servicos/${servico.id}`)}>
+              <div
+                key={servico.id}
+                className="service-card"
+                onClick={() => navigate(`/servicos/${servico.id}`)}
+              >
                 <h3>{servico.titulo}</h3>
                 <p>{servico.descricao}</p>
-            <div className="service-card-actions">
-                <button 
-                  type="button" 
-                  className="btn-delete"
-                  onClick={() => handleDeletar(servico.id)}
-                >
-                  Excluir
-                </button>
-              </div>
+
+                <div className="service-card-actions">
+                  <button
+                    type="button"
+                    className="btn-orcamentos"
+                    onClick={(e) => handleVerOrcamentos(e, servico.id)}
+                  >
+                    Ver Orçamentos
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn-delete"
+                    onClick={(e) => handleDeletar(e, servico.id)}
+                  >
+                    Excluir
+                  </button>
+                </div>
               </div>
             ))}
           </div>
