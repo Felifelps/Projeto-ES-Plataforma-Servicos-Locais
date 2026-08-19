@@ -105,8 +105,8 @@ export default function OrcamentosRecebidos() {
       setErroFeedback('');
 
       await orcamentoService.responderOrcamento(orcamentoSelecionado.id, {
-        valor: data.valor,
-        condicoes: data.condicoes || undefined,
+        valor_resposta: Number(data.valor),
+        descricao_resposta: data.condicoes || '',
       });
 
       setSucessoFeedback('Orçamento respondido com sucesso!');
@@ -225,15 +225,15 @@ export default function OrcamentosRecebidos() {
               <form onSubmit={handleSubmit(onSubmitResposta)} noValidate>
                 <div className="form-field">
                   <label htmlFor="valor">Valor proposto (R$)</label>
-                  <input
+                  <input required
                     id="valor"
                     type="number"
-                    step="0.01"
-                    placeholder="Ex.: 200.00 (opcional se houver condições)"
+                    step="1"
+                    placeholder="Ex.: 200.00"
                     disabled={enviando}
                     {...register('valor', {
                       setValueAs: (v) =>
-                        v === '' || v === null || v === undefined ? undefined : Number(v),
+                        Number(v),
                     })}
                   />
                   {errors.valor && <span className="field-error">{errors.valor.message}</span>}
@@ -241,7 +241,7 @@ export default function OrcamentosRecebidos() {
 
                 <div className="form-field">
                   <label htmlFor="condicoes">Condições do serviço</label>
-                  <textarea
+                  <textarea required
                     id="condicoes"
                     rows={4}
                     placeholder="Ex.: Inclui materiais básicos. Início a partir de segunda-feira."

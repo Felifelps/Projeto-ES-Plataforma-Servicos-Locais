@@ -17,7 +17,7 @@ class OrcamentoService {
 
   //2. Responder a um orçamento
   async responderOrcamento(id: number, data: OrcamentoRespostaRequest): Promise<OrcamentoResponse> {
-    const response = await api.post<OrcamentoResponse>(`/orcamentos/${id}/responder`, data);
+    const response = await api.put<OrcamentoResponse>(`/orcamentos/${id}/responder`, data);
     return response.data;
   }
 }

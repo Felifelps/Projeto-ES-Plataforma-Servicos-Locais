@@ -1,4 +1,4 @@
 export interface OrcamentoRespostaRequest {
-    valor?: number;
-    condicoes?: string;
+    valor_resposta: number;
+    descricao_resposta: string;
 }
