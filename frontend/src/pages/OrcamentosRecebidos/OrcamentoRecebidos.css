@@ -1,0 +1,144 @@
+.orcamentos-page {
+  padding: 2rem 1rem;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 70px);
+}
+
+.orcamentos-container {
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.orcamentos-header {
+  margin-bottom: 2rem;
+}
+
+.orcamentos-header h1 {
+  font-size: 1.75rem;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.orcamentos-header p {
+  color: #64748b;
+}
+
+.orcamentos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.orcamento-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.orcamento-badge-servico {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2563eb;
+  background-color: #eff6ff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.orcamento-email {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.orcamento-detalhes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background-color: #f8fafc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.orcamento-descricao {
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.orcamento-resposta-box {
+  margin-bottom: 1rem;
+  padding: 0.85rem;
+  background-color: #f0fdf4;
+  border-left: 4px solid #22c55e;
+  border-radius: 4px;
+}
+
+.orcamento-card-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-subtitle {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 1.5rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.form-field label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #334155;
+}
+
+.form-field input,
+.form-field textarea {
+  padding: 0.6rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.field-error {
+  color: #ef4444;
+  font-size: 0.85rem;
+}

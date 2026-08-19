@@ -9,4 +9,7 @@ import java.util.List;
 @Repository
 public interface OrcamentoRepository extends JpaRepository<Orcamento, Long> {
     List<Orcamento> findByPrestadorUserId(Long usuarioId);
+    
+    // Busca os orçamentos criados pelo solicitante (cliente)
+    List<Orcamento> findBySolicitanteId(Long solicitanteId);
 }
