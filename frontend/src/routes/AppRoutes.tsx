@@ -10,6 +10,7 @@ import ServicoDetalhe from '../pages/ServicoDetalhe/ServicoDetalhe';
 import MeusServicos from '../pages/MeusServicos/MeusServicos';
 import SolicitarOrcamento from '../pages/SolicitarOrcamento/SolicitarOrcamento';
 import OrcamentosRecebidos from '../pages/OrcamentosRecebidos/OrcamentosRecebidos';
+import MeusOrcamentosSolicitados from '../pages/MeusOrcamentosSolicitados/MeusOrcamentosSolicitados';
 
 export default function AppRoutes() {
   return (
@@ -28,6 +29,7 @@ export default function AppRoutes() {
           path="/servicos/:id/solicitar-orcamento"
           element={<SolicitarOrcamento />}
         />
+        <Route path="/meus-orcamentos" element={<MeusOrcamentosSolicitados />} />
       </Route>
 
       <Route element={<PrivateRoute allowedRoles={['PRESTADOR']} requireRole />}>
