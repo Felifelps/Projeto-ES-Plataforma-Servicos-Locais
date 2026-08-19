@@ -26,6 +26,12 @@ export default function HomeHeader({ isAuthenticated, userRole }: HeaderSectionP
         <nav className="header-actions">
           {isAuthenticated ? (
             <div className="user-profile-nav">
+              <Link
+              to='/meus-orcamentos'
+              className="btn-nav-orcamentos"
+            >
+              Meus Orçamentos
+            </Link>
               <span className="user-greeting">Olá, <strong>{userName}</strong></span>
               <span className={`role-badge ${userRole.toLowerCase()}`}>{userRole}</span>
               <button onClick={handleLogout} className="btn-logout">
