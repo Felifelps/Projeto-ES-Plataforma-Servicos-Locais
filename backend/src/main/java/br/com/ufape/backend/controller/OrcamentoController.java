@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/orcamentos")
 public class OrcamentoController {
@@ -51,4 +52,15 @@ public class OrcamentoController {
         
         return ResponseEntity.ok(orcamentoRespondido);
     }
+
+    @GetMapping("/solicitados")
+    //Lista as solicitações de orçamento feitas pelo cliente autenticado
+    public ResponseEntity<List<OrcamentoResponseDto>> listarSolicitados(
+        @AuthenticationPrincipal User usuarioAutenticado) {
+    
+    // Chama o service passando o ID do usuário autenticado (cliente)
+    List<OrcamentoResponseDto> solicitados = orcamentoService.buscarSolicitadosPorCliente(usuarioAutenticado.getId());
+    return ResponseEntity.ok(solicitados);
+}
+    
 }

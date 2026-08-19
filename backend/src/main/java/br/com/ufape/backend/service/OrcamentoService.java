@@ -52,6 +52,12 @@ public class OrcamentoService {
                 .map(this::toResponseDto)
                 .toList();
     }
+    
+    public List<OrcamentoResponseDto> buscarSolicitadosPorCliente(Long usuarioId) {
+    return orcamentoRepository.findBySolicitanteId(usuarioId).stream()
+            .map(this::toResponseDto)
+            .toList();
+    }
 
     private OrcamentoResponseDto toResponseDto(Orcamento o) {
         return new OrcamentoResponseDto(
