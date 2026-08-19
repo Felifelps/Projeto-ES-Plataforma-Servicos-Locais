@@ -29,6 +29,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven 
+
+      - name: Cache dos pacotes do SonarCloud
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
       - name: 🧪 Compilar, Rodar Testes e Gerar Relatório JaCoCo
         run: mvn clean verify -Dspring.profiles.active=test
 
@@ -36,4 +44,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  
-        run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+        run: >
+          mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
