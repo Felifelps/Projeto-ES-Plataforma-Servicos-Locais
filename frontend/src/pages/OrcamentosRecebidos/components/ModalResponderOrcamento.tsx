@@ -26,9 +26,9 @@ const respostaSchema = z
 type RespostaFormData = z.infer<typeof respostaSchema>;
 
 interface ModalResponderOrcamentoProps {
-  orcamento: OrcamentoResponse;
-  onClose: () => void;
-  onSucesso: (orcamentoId: number, valor?: number, condicoes?: string) => void;
+  readonly orcamento: OrcamentoResponse;
+  readonly onClose: () => void;
+  readonly onSucesso: (orcamentoId: number, valor?: number, condicoes?: string) => void;
 }
 
 export default function ModalResponderOrcamento({
@@ -85,7 +85,7 @@ export default function ModalResponderOrcamento({
   };
 
   return (
-    <div className="modal-overlay" role="dialog" aria-modal="true">
+    <dialog open className="modal-overlay">
       <div className="modal-content">
         <h2>Responder Orçamento</h2>
         <p className="modal-subtitle">
@@ -139,6 +139,6 @@ export default function ModalResponderOrcamento({
           </div>
         </form>
       </div>
-    </div>
+    </dialog>
   );
 }

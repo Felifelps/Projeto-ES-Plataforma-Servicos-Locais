@@ -1,8 +1,8 @@
 import type { OrcamentoResponse } from '../../../models/orcamento-response.model';
 
 interface OrcamentoRecebidoCardProps {
-  orcamento: OrcamentoResponse;
-  onResponder: (orcamento: OrcamentoResponse) => void;
+  readonly orcamento: OrcamentoResponse;
+  readonly onResponder: (orcamento: OrcamentoResponse) => void;
 }
 
 export default function OrcamentoRecebidoCard({

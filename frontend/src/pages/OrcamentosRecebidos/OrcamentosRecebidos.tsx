@@ -26,7 +26,9 @@ export default function OrcamentosRecebidos() {
         console.error('Erro ao carregar orçamentos:', err);
         setErrorMessage('Não foi possível carregar as solicitações de orçamento.');
       } finally {
-        if (ativo) setLoading(false);
+        if (ativo) {
+          setLoading(false);
+        }
       }
     }
 
@@ -52,6 +54,10 @@ export default function OrcamentosRecebidos() {
     );
   };
 
+  const handleFecharModal = () => {
+    setOrcamentoSelecionado(null);
+  };
+
   return (
     <>
       <header className="servicos-topbar">
@@ -67,13 +73,15 @@ export default function OrcamentosRecebidos() {
 
           {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
 
-          {loading ? (
-            <div className="orcamentos-status">Carregando solicitações...</div>
-          ) : orcamentos.length === 0 ? (
+          {loading && <div className="orcamentos-status">Carregando solicitações...</div>}
+
+          {!loading && orcamentos.length === 0 && (
             <div className="empty-state">
               <p>Nenhuma solicitação de orçamento recebida até o momento.</p>
             </div>
-          ) : (
+          )}
+
+          {!loading && orcamentos.length > 0 && (
             <div className="orcamentos-list">
               {orcamentos.map((orcamento) => (
                 <OrcamentoRecebidoCard
@@ -89,7 +97,7 @@ export default function OrcamentosRecebidos() {
         {orcamentoSelecionado && (
           <ModalResponderOrcamento
             orcamento={orcamentoSelecionado}
-            onClose={() => setOrcamentoSelecionado(null)}
+            onClose={handleFecharModal}
             onSucesso={handleSucessoResposta}
           />
         )}
