@@ -38,11 +38,11 @@ public class ProviderProfileService {
         this.userRepository = userRepository;
     }
 
-    @Transactional // 🟢 CRÍTICO: Garante que o perfil E a role do usuário sejam persistidos juntos no banco
+    @Transactional // Garante que o perfil E a role do usuário sejam persistidos juntos no banco
     public ProviderProfileResponseDto criar(User usuarioAutenticado, ProviderProfileRequestDto dto) {
         validatePerfilInexistente(usuarioAutenticado.getId());
 
-        // 🟢 Busca a instância gerenciada (managed) do usuário no banco para garantir o UPDATE do papel
+        // Busca a instância gerenciada (managed) do usuário no banco para garantir o UPDATE do papel
         User userManaged = userRepository.findById(usuarioAutenticado.getId())
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
 
