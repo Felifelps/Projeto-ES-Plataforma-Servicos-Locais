@@ -51,7 +51,6 @@ export default function MeusOrcamentosSolicitados() {
         await orcamentoService.recusarOrcamento(id);
       }
 
-      // ✅ Atualiza status_resposta no estado local
       setOrcamentos((prev) =>
         prev.map((item) =>
           item.id === id
@@ -142,17 +141,17 @@ export default function MeusOrcamentosSolicitados() {
                     {temResposta && (
                       <div className="orcamento-proposta-box">
                         <h4>Proposta do Prestador</h4>
-                        {orcamento.valor_resposta !== undefined && (
-                          <p className="proposta-valor">
-                            Valor:{' '}
-                            <strong>
-                              {orcamento.valor_resposta.toLocaleString('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL',
-                              })}
-                            </strong>
-                          </p>
-                        )}
+                        {orcamento.valor_resposta !== null && orcamento.valor_resposta !== undefined && (
+                            <p className="proposta-valor">
+                                Valor:{' '}
+                                <strong>
+                                {Number(orcamento.valor_resposta).toLocaleString('pt-BR', {
+                                    style: 'currency',
+                                    currency: 'BRL',
+                                })}
+                                </strong>
+                            </p>
+                            )}
                         {orcamento.descricao_resposta && (
                           <p className="proposta-condicoes">
                             <strong>Condições / Detalhes:</strong> {orcamento.descricao_resposta}
