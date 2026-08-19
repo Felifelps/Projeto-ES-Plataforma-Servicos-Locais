@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { cadastroServicoService } from '../../services/cadastro-servico.service';
 import type { ServicoCadastroResponse } from '../../models/servico-cadastro.model';
-import './MeusServicos.css';
 import Logo from '../../components/Logo/Logo';
+import './MeusServicos.css';
 
 export default function MeusServicos() {
   const navigate = useNavigate();
@@ -38,9 +38,7 @@ export default function MeusServicos() {
     };
   }, []);
 
-  const handleDeletar = async (e: React.MouseEvent, id: number) => {
-    e.stopPropagation(); // Evita acionar o clique do card
-
+  const handleDeletar = async (id: number) => {
     const confirmou = window.confirm(
       'Tem certeza que deseja excluir este serviço? Esta ação não pode ser desfeita.'
     );
@@ -55,8 +53,7 @@ export default function MeusServicos() {
     }
   };
 
-  const handleVerOrcamentos = (e: React.MouseEvent, servicoId: number) => {
-    e.stopPropagation(); 
+  const handleVerOrcamentos = (servicoId: number) => {
     navigate(`/meus-servicos/orcamentos/${servicoId}`);
   };
 
@@ -80,9 +77,9 @@ export default function MeusServicos() {
 
         {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
 
-        {loading ? (
-          <p>Carregando serviços...</p>
-        ) : servicos.length === 0 ? (
+        {loading && <p>Carregando serviços...</p>}
+
+        {!loading && servicos.length === 0 && (
           <div className="empty-state">
             <p>Você ainda não possui serviços cadastrados.</p>
             <button
@@ -93,22 +90,24 @@ export default function MeusServicos() {
               Cadastrar meu primeiro serviço
             </button>
           </div>
-        ) : (
+        )}
+
+        {!loading && servicos.length > 0 && (
           <div className="services-grid">
             {servicos.map((servico) => (
-              <div
-                key={servico.id}
-                className="service-card"
-                onClick={() => navigate(`/servicos/${servico.id}`)}
-              >
-                <h3>{servico.titulo}</h3>
+              <article key={servico.id} className="service-card">
+                <h3>
+                  <Link to={`/servicos/${servico.id}`} className="service-card-title-link">
+                    {servico.titulo}
+                  </Link>
+                </h3>
                 <p>{servico.descricao}</p>
 
                 <div className="service-card-actions">
                   <button
                     type="button"
                     className="btn-orcamentos"
-                    onClick={(e) => handleVerOrcamentos(e, servico.id)}
+                    onClick={() => handleVerOrcamentos(servico.id)}
                   >
                     Ver Orçamentos
                   </button>
@@ -116,12 +115,12 @@ export default function MeusServicos() {
                   <button
                     type="button"
                     className="btn-delete"
-                    onClick={(e) => handleDeletar(e, servico.id)}
+                    onClick={() => handleDeletar(servico.id)}
                   >
                     Excluir
                   </button>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         )}

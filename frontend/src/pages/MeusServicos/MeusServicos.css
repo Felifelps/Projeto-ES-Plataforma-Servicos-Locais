@@ -147,6 +147,17 @@
   justify-content: flex-end;
 }
 
+.service-card-title-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.service-card-title-link:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
 .btn-orcamentos {
   background-color: #2563eb;
   color: #ffffff;
