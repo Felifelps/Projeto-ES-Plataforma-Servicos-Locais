@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/register", "/auth/login", "/auth/logout", "/error").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/servicos").hasRole("PRESTADOR")
+                        .requestMatchers(HttpMethod.POST, "/servicos/*/avaliacoes").authenticated()
                         .requestMatchers(HttpMethod.GET, "/servicos/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/orcamentos/recebidos").hasRole("PRESTADOR")
                         .requestMatchers(HttpMethod.POST, "/orcamentos").authenticated()
@@ -62,8 +63,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://localhost:5173"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:4200", 
+                "http://localhost:5173", 
+                "https://servicos-frontend.onrender.com"
+        ));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 

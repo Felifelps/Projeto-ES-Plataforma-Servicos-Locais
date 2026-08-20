@@ -2,6 +2,7 @@ package br.com.ufape.backend.service;
 
 import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
+import br.com.ufape.backend.enums.StatusServico;
 import br.com.ufape.backend.model.*;
 import br.com.ufape.backend.repository.ProviderProfileRepository;
 import br.com.ufape.backend.repository.ServiceCategoryRepository;
@@ -88,6 +89,7 @@ class ServicoServiceTest {
         servicoSalvo.setTitulo(dto.titulo());
         servicoSalvo.setCategoria(categoria);
         servicoSalvo.setPrestador(perfil);
+        servicoSalvo.setStatus(StatusServico.DISPONIVEL);
 
         when(servicoRepository.save(any(Servico.class))).thenReturn(servicoSalvo);
 
@@ -97,6 +99,7 @@ class ServicoServiceTest {
         assertEquals("Instalação de Fiação", resultado.getTitulo());
         assertEquals("Eletricista", resultado.getCategoria().getName());
         assertEquals(perfil, resultado.getPrestador());
+        assertEquals(StatusServico.DISPONIVEL, resultado.getStatus());
     }
 
 
