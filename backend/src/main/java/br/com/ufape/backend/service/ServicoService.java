@@ -3,6 +3,7 @@ package br.com.ufape.backend.service;
 import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
 import br.com.ufape.backend.dto.ServicoResumoResponseDto;
+import br.com.ufape.backend.enums.StatusServico;
 import br.com.ufape.backend.model.ProviderProfile;
 import br.com.ufape.backend.model.ServiceCategory;
 import br.com.ufape.backend.model.Servico;
@@ -51,6 +52,7 @@ public class ServicoService {
         servico.setFormaCobranca(dto.formaCobranca());
         servico.setCategoria(categoria);
         servico.setPrestador(prestador);
+        servico.setStatus(StatusServico.DISPONIVEL);
 
         return servicoRepository.save(servico);
     }

@@ -1,10 +1,13 @@
 package br.com.ufape.backend.controller;
 
+import br.com.ufape.backend.dto.AvaliacaoRequestDto;
+import br.com.ufape.backend.dto.AvaliacaoResponseDto;
 import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
 import br.com.ufape.backend.dto.ServicoResumoResponseDto;
 import br.com.ufape.backend.model.Servico;
 import br.com.ufape.backend.model.User;
+import br.com.ufape.backend.service.AvaliacaoService;
 import br.com.ufape.backend.service.ServicoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,9 @@ public class ServicoController {
 
     @Autowired
     private ServicoService servicoService;
+
+    @Autowired
+    private AvaliacaoService avaliacaoService;
 
     @PostMapping
     public ResponseEntity<Servico> cadastrar(@RequestBody @Valid ServicoRequestDto dto) {
@@ -55,12 +61,22 @@ public class ServicoController {
         return ResponseEntity.ok(detalhe);
     }
 
+    @PostMapping("/{id}/avaliacoes")
+    public ResponseEntity<AvaliacaoResponseDto> avaliarServico(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User usuarioAutenticado,
+            @RequestBody @Valid AvaliacaoRequestDto dto) {
+
+        AvaliacaoResponseDto avaliacao = avaliacaoService.criar(id, usuarioAutenticado, dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(avaliacao);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(
-        @PathVariable Long id,
-        @AuthenticationPrincipal User usuarioAutenticado) {
+            @PathVariable Long id,
+            @AuthenticationPrincipal User usuarioAutenticado) {
 
         servicoService.deletarServico(id, usuarioAutenticado.getId());
         return ResponseEntity.noContent().build(); // Retorna 204 No Content
-}
+    }
 }

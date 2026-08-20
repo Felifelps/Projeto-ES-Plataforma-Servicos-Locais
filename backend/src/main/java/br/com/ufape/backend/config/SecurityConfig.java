@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/register", "/auth/login", "/auth/logout", "/error").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/servicos").hasRole("PRESTADOR")
+                        .requestMatchers(HttpMethod.POST, "/servicos/*/avaliacoes").authenticated()
                         .requestMatchers(HttpMethod.GET, "/servicos/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/orcamentos/recebidos").hasRole("PRESTADOR")
                         .requestMatchers(HttpMethod.POST, "/orcamentos").authenticated()
