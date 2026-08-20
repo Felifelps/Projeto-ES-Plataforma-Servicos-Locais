@@ -1,6 +1,7 @@
 package br.com.ufape.backend.exception;
 
 import br.com.ufape.backend.dto.ErrorResponseDto;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -52,6 +53,17 @@ public class GlobalExceptionHandler {
         }
 
         return buildResponse(message, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponseDto> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        String message = ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : "";
+
+        if (message.contains("uk_avaliacao_servico_usuario")) {
+            return buildResponse("O usuário já avaliou este serviço", HttpStatus.CONFLICT);
+        }
+
+        return buildResponse("Violação de integridade de dados", HttpStatus.BAD_REQUEST);
     }
 
     private ResponseEntity<ErrorResponseDto> buildResponse(String message, HttpStatus status) {
