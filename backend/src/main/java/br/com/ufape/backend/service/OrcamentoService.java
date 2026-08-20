@@ -3,6 +3,7 @@ package br.com.ufape.backend.service;
 import br.com.ufape.backend.dto.OrcamentoRequestDto;
 import br.com.ufape.backend.dto.OrcamentoResponderRequestDto;
 import br.com.ufape.backend.dto.OrcamentoResponseDto;
+import br.com.ufape.backend.enums.StatusServico;
 import br.com.ufape.backend.model.Orcamento;
 import br.com.ufape.backend.model.ProviderProfile;
 import br.com.ufape.backend.model.Servico;
@@ -118,6 +119,9 @@ public class OrcamentoService {
         }
 
         orcamento.setStatus_resposta("ACEITO");
+        Servico servico = orcamento.getServico();
+        servico.setCliente(clienteAutenticado);
+        servico.setStatus(StatusServico.EM_ANDAMENTO);
         Orcamento orcamentoAtualizado = orcamentoRepository.save(orcamento);
 
         return toResponseDto(orcamentoAtualizado);
@@ -142,4 +146,3 @@ public class OrcamentoService {
         return toResponseDto(orcamentoAtualizado);
     }
 }
-
