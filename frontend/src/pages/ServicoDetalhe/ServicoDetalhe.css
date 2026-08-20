@@ -110,26 +110,43 @@
 .servico-acoes {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-top: 28px;
   padding-top: 22px;
   border-top: 1px solid #e5e7eb;
 }
 
-.btn-solicitar-orcamento {
+.btn-solicitar-orcamento,
+.btn-avaliar-prestador {
   padding: 12px 22px;
-  border: 1px solid #0f766e;
   border-radius: 12px;
-  background: #0f766e;
-  color: #ffffff;
   font: inherit;
   font-weight: 700;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
 }
 
+.btn-solicitar-orcamento {
+  border: 1px solid #0f766e;
+  background: #0f766e;
+  color: #ffffff;
+}
+
 .btn-solicitar-orcamento:hover {
   border-color: #115e59;
   background: #115e59;
+}
+
+.btn-avaliar-prestador {
+  border: 1px solid #d97706;
+  background: #ffffff;
+  color: #b45309;
+}
+
+.btn-avaliar-prestador:hover {
+  border-color: #b45309;
+  background: #fffbeb;
 }
 
 .alert {
@@ -146,7 +163,8 @@
 
 @media (max-width: 640px) {
   .servico-acoes,
-  .btn-solicitar-orcamento {
+  .btn-solicitar-orcamento,
+  .btn-avaliar-prestador {
     width: 100%;
   }
 }

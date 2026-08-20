@@ -9,6 +9,7 @@ import Servicos from '../pages/Servicos/Servicos';
 import ServicoDetalhe from '../pages/ServicoDetalhe/ServicoDetalhe';
 import MeusServicos from '../pages/MeusServicos/MeusServicos';
 import SolicitarOrcamento from '../pages/SolicitarOrcamento/SolicitarOrcamento';
+import AvaliarPrestador from '../pages/AvaliarPrestador/AvaliarPrestador';
 import OrcamentosRecebidos from '../pages/OrcamentosRecebidos/OrcamentosRecebidos';
 import MeusOrcamentosSolicitados from '../pages/MeusOrcamentosSolicitados/MeusOrcamentosSolicitados';
 
@@ -28,6 +29,10 @@ export default function AppRoutes() {
         <Route
           path="/servicos/:id/solicitar-orcamento"
           element={<SolicitarOrcamento />}
+        />
+        <Route
+          path="/servicos/:id/avaliar-prestador"
+          element={<AvaliarPrestador />}
         />
         <Route path="/meus-orcamentos" element={<MeusOrcamentosSolicitados />} />
       </Route>
