@@ -8,4 +8,8 @@ export interface OrcamentoResponse {
   nomePrestador: string;
   nomeSolicitante: string;
   emailSolicitante: string;
+  //Campos opcionais
+  descricao_resposta?: string;
+  status_resposta?: string;
+  valor_resposta?: number;
 }

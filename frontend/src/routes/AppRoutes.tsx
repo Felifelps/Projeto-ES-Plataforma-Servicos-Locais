@@ -9,6 +9,8 @@ import Servicos from '../pages/Servicos/Servicos';
 import ServicoDetalhe from '../pages/ServicoDetalhe/ServicoDetalhe';
 import MeusServicos from '../pages/MeusServicos/MeusServicos';
 import SolicitarOrcamento from '../pages/SolicitarOrcamento/SolicitarOrcamento';
+import OrcamentosRecebidos from '../pages/OrcamentosRecebidos/OrcamentosRecebidos';
+import MeusOrcamentosSolicitados from '../pages/MeusOrcamentosSolicitados/MeusOrcamentosSolicitados';
 
 export default function AppRoutes() {
   return (
@@ -27,11 +29,13 @@ export default function AppRoutes() {
           path="/servicos/:id/solicitar-orcamento"
           element={<SolicitarOrcamento />}
         />
+        <Route path="/meus-orcamentos" element={<MeusOrcamentosSolicitados />} />
       </Route>
 
       <Route element={<PrivateRoute allowedRoles={['PRESTADOR']} requireRole />}>
         <Route path="/servicos/cadastrar" element={<CadastroServico />} />
         <Route path="/meus-servicos" element={<MeusServicos />} />
+        <Route path="/meus-servicos/orcamentos/:id" element={<OrcamentosRecebidos />} />
       </Route>
 
       {/* Redirecionamento para rota não encontrada ou padrão */}

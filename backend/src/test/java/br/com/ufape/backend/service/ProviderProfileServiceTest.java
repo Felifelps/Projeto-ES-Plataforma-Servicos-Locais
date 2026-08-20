@@ -13,11 +13,12 @@ import br.com.ufape.backend.repository.ServiceCategoryRepository;
 import br.com.ufape.backend.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -60,6 +61,7 @@ class ProviderProfileServiceTest {
     @Test
     void shouldCreateProfileAndPromoteUserToPrestador() {
         User user = usuario();
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(providerProfileRepository.existsByUserId(user.getId())).thenReturn(false);
         when(serviceCategoryRepository.findByNameIn(List.of("Eletricista")))
                 .thenReturn(List.of(new ServiceCategory("Eletricista")));
@@ -76,6 +78,7 @@ class ProviderProfileServiceTest {
     @Test
     void shouldRejectWhenUserAlreadyHasProfile() {
         User user = usuario();
+        
         when(providerProfileRepository.existsByUserId(user.getId())).thenReturn(true);
 
         assertThrows(ProviderProfileAlreadyExistsException.class,
@@ -88,6 +91,7 @@ class ProviderProfileServiceTest {
     @Test
     void shouldRejectWhenCategoryDoesNotExist() {
         User user = usuario();
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(providerProfileRepository.existsByUserId(user.getId())).thenReturn(false);
         when(serviceCategoryRepository.findByNameIn(List.of("Eletricista")))
                 .thenReturn(List.of());
