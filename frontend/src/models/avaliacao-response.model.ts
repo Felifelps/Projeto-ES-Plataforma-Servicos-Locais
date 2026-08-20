@@ -5,4 +5,5 @@ export interface AvaliacaoResponse {
   servicoId: number;
   prestadorId: number;
   usuarioId: number;
+  createdAt: string;
 }

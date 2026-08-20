@@ -20,6 +20,7 @@ const avaliarPrestadorSchema = z.object({
   comentario: z
     .string()
     .trim()
+    .max(1000, 'O comentário deve ter no máximo 1000 caracteres.')
     .optional(),
 });
 
@@ -217,6 +218,7 @@ export default function AvaliarPrestador() {
                 <textarea
                   id="comentario"
                   rows={6}
+                  maxLength={1000}
                   placeholder="Conte o que mais gostou ou o que poderia ter sido melhor no atendimento."
                   aria-invalid={Boolean(errors.comentario)}
                   aria-describedby={errors.comentario ? 'comentario-error' : 'comentario-ajuda'}
