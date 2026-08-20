@@ -57,9 +57,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseDto> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
-        String message = ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : "";
+        String message = ex.getMostSpecificCause().getMessage();
 
-        if (message.contains("uk_avaliacao_servico_usuario")) {
+        if (message != null && message.contains("uk_avaliacao_servico_usuario")) {
             return buildResponse("O usuário já avaliou este serviço", HttpStatus.CONFLICT);
         }
 
