@@ -4,6 +4,13 @@ Trabalho da segunda VA (Verificação de Aprendizagem) da disciplina de Engenhar
 
 Aplicativo/plataforma web que conecta moradores de uma região a prestadores de serviços locais de qualquer categoria (reparos residenciais, aulas particulares, beleza e estética, jardinagem, limpeza, pet care, eventos, entre outros), permitindo buscar, comparar e contratar serviços próximos de forma centralizada.
 
+## 🚀 Links da Aplicação em Produção (Deploy)
+
+| Serviço | URL de Acesso | Descrição |
+| :--- | :--- | :--- |
+| **Frontend** | [https://projeto-es-frontend.onrender.com/](https://projeto-es-frontend.onrender.com/) | Interface web da aplicação (React/Vite) |
+| **Backend API** | [https://projeto-es-backend.onrender.com/](https://projeto-es-backend.onrender.com/) | API REST (Spring Boot) |
+
 ## Sobre o Projeto
 
 Hoje, a busca por prestadores de serviço é fragmentada: depende de indicação boca a boca, grupos de redes sociais ou classificados sem padronização. Isso dificulta comparar preços, avaliações e disponibilidade de forma rápida e confiável.
