@@ -1,6 +1,5 @@
 package br.com.ufape.backend.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,11 +24,13 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private SecurityFilter securityFilter;
+    private final SecurityFilter securityFilter;
+    private final AuthenticationEntryPointHandler authenticationEntryPointHandler;
 
-    @Autowired
-    private AuthenticationEntryPointHandler authenticationEntryPointHandler;
+    public SecurityConfig(SecurityFilter securityFilter, AuthenticationEntryPointHandler authenticationEntryPointHandler) {
+        this.securityFilter = securityFilter;
+        this.authenticationEntryPointHandler = authenticationEntryPointHandler;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -37,6 +38,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @SuppressWarnings("java:S4502")
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
@@ -44,7 +46,6 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPointHandler))
                 .authorizeHttpRequests(auth -> auth
-                        // Libera todas as requisições OPTIONS (Preflight)
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/register", "/auth/login", "/auth/logout", "/error").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -68,8 +69,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
-        // Use allowedOriginPatterns para aceitar subdominios ou variantes
+
         configuration.setAllowedOriginPatterns(List.of(
                 "http://localhost:*",
                 "https://servicos-frontend.onrender.com",
