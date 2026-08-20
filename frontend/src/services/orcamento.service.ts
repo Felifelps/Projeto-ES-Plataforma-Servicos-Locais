@@ -1,10 +1,42 @@
 import api from './api';
 import type { OrcamentoRequest } from '../models/orcamento-request.model';
 import type { OrcamentoResponse } from '../models/orcamento-response.model';
+import type { OrcamentoRespostaRequest } from '../models/orcamento-resposta-request.model';
 
 class OrcamentoService {
   async solicitar(data: OrcamentoRequest): Promise<OrcamentoResponse> {
     const response = await api.post<OrcamentoResponse>('/orcamentos', data);
+    return response.data;
+  }
+
+  //PRESTADOR
+  //1. Listar orçamentos recebidos
+  async listarOrcamentosRecebidos(): Promise<OrcamentoResponse[]> {
+    const response = await api.get<OrcamentoResponse[]>('/orcamentos/recebidos');
+    return response.data;
+  }
+
+  //2. Responder a um orçamento
+  async responderOrcamento(id: number, data: OrcamentoRespostaRequest): Promise<OrcamentoResponse> {
+    const response = await api.put<OrcamentoResponse>(`/orcamentos/${id}/responder`, data);
+    return response.data;
+  }
+  //CLIENTE
+  //1. Listar orçamentos solicitados
+  async listarOrcamentosSolicitados(): Promise<OrcamentoResponse[]> {
+    const response = await api.get<OrcamentoResponse[]>('/orcamentos/solicitados');
+    return response.data;
+  }
+
+  //2. Aceitar um orçamento
+  async aceitarOrcamento(id: number): Promise<OrcamentoResponse> {
+    const response = await api.put<OrcamentoResponse>(`/orcamentos/${id}/aceitar`);
+    return response.data;
+  }
+
+  //3. Recusar um orçamento
+  async recusarOrcamento(id: number): Promise<OrcamentoResponse> {
+    const response = await api.put<OrcamentoResponse>(`/orcamentos/${id}/recusar`);
     return response.data;
   }
 }

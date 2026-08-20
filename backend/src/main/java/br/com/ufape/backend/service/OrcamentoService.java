@@ -53,6 +53,12 @@ public class OrcamentoService {
                 .toList();
     }
 
+    public List<OrcamentoResponseDto> buscarSolicitadosPorCliente(Long usuarioId) {
+    return orcamentoRepository.findBySolicitanteId(usuarioId).stream()
+            .map(this::toResponseDto)
+            .toList();
+    }
+
     private OrcamentoResponseDto toResponseDto(Orcamento o) {
         return new OrcamentoResponseDto(
                 o.getId(),
@@ -96,4 +102,44 @@ public class OrcamentoService {
 
         return toResponseDto(orcamentoAtualizado);
     }
+    @Transactional
+    public OrcamentoResponseDto aceitar(Long orcamentoId, User clienteAutenticado) {
+        Orcamento orcamento = orcamentoRepository.findById(orcamentoId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Orçamento não encontrado"));
+
+        // Garante que apenas o cliente que criou a solicitação possa aceitar
+        if (!orcamento.getSolicitante().getId().equals(clienteAutenticado.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para aceitar este orçamento");
+        }
+
+        // Só pode aceitar se o prestador já tiver respondido
+        if (!"RESPONDIDO".equals(orcamento.getStatus_resposta())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O orçamento precisa estar respondido para ser aceito");
+        }
+
+        orcamento.setStatus_resposta("ACEITO");
+        Orcamento orcamentoAtualizado = orcamentoRepository.save(orcamento);
+
+        return toResponseDto(orcamentoAtualizado);
+    }
+
+    @Transactional
+    public OrcamentoResponseDto recusar(Long orcamentoId, User clienteAutenticado) {
+        Orcamento orcamento = orcamentoRepository.findById(orcamentoId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Orçamento não encontrado"));
+
+        if (!orcamento.getSolicitante().getId().equals(clienteAutenticado.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para recusar este orçamento");
+        }
+
+        if (!"RESPONDIDO".equals(orcamento.getStatus_resposta())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O orçamento precisa estar respondido para ser recusado");
+        }
+
+        orcamento.setStatus_resposta("RECUSADO");
+        Orcamento orcamentoAtualizado = orcamentoRepository.save(orcamento);
+
+        return toResponseDto(orcamentoAtualizado);
+    }
 }
+

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { cadastroServicoService } from '../../services/cadastro-servico.service';
 import type { ServicoCadastroResponse } from '../../models/servico-cadastro.model';
-import './MeusServicos.css';
 import Logo from '../../components/Logo/Logo';
+import './MeusServicos.css';
 
 export default function MeusServicos() {
   const navigate = useNavigate();
@@ -12,43 +12,56 @@ export default function MeusServicos() {
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
+    let ativo = true;
+
     async function carregarServicos() {
       try {
-        setLoading(true);
-        // Calls the backend to retrieve the list:
         const dados = await cadastroServicoService.listarMeusServicos();
+        if (!ativo) return;
         setServicos(dados);
+        setErrorMessage('');
       } catch (error) {
+        if (!ativo) return;
         console.error('Erro ao buscar serviços do prestador:', error);
         setErrorMessage('Não foi possível carregar a lista de serviços.');
       } finally {
-        setLoading(false);
+        if (ativo) {
+          setLoading(false);
+        }
       }
     }
 
     carregarServicos();
+
+    return () => {
+      ativo = false;
+    };
   }, []);
 
   const handleDeletar = async (id: number) => {
-    const confirmou = window.confirm('Tem certeza que deseja excluir este serviço? Esta ação não pode ser desfeita.');
+    const confirmou = window.confirm(
+      'Tem certeza que deseja excluir este serviço? Esta ação não pode ser desfeita.'
+    );
     if (!confirmou) return;
 
     try {
       await cadastroServicoService.deletar(id);
-      // 🟢 Remove o serviço da lista do estado local instantaneamente
       setServicos((servicosAnteriores) => servicosAnteriores.filter((s) => s.id !== id));
-      navigate('/meus-servicos'); // Redireciona para a página de serviços após a exclusão
     } catch (error) {
       console.error('Erro ao deletar serviço:', error);
       alert('Não foi possível excluir o serviço. Tente novamente.');
     }
-};
+  };
+
+  const handleVerOrcamentos = (servicoId: number) => {
+    navigate(`/meus-servicos/orcamentos/${servicoId}`);
+  };
 
   return (
     <main className="my-services-page">
       <section className="my-services-container">
         <header className="my-services-header">
-            <Logo />
+          <Logo />
           <div>
             <h1>Meus Serviços</h1>
             <p>Gerencie os serviços oferecidos por você.</p>
@@ -64,9 +77,9 @@ export default function MeusServicos() {
 
         {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
 
-        {loading ? (
-          <p>Carregando serviços...</p>
-        ) : servicos.length === 0 ? (
+        {loading && <p>Carregando serviços...</p>}
+
+        {!loading && servicos.length === 0 && (
           <div className="empty-state">
             <p>Você ainda não possui serviços cadastrados.</p>
             <button
@@ -77,22 +90,37 @@ export default function MeusServicos() {
               Cadastrar meu primeiro serviço
             </button>
           </div>
-        ) : (
+        )}
+
+        {!loading && servicos.length > 0 && (
           <div className="services-grid">
             {servicos.map((servico) => (
-              <div key={servico.id} className="service-card" onClick={() => navigate(`/servicos/${servico.id}`)}>
-                <h3>{servico.titulo}</h3>
+              <article key={servico.id} className="service-card">
+                <h3>
+                  <Link to={`/servicos/${servico.id}`} className="service-card-title-link">
+                    {servico.titulo}
+                  </Link>
+                </h3>
                 <p>{servico.descricao}</p>
-            <div className="service-card-actions">
-                <button 
-                  type="button" 
-                  className="btn-delete"
-                  onClick={() => handleDeletar(servico.id)}
-                >
-                  Excluir
-                </button>
-              </div>
-              </div>
+
+                <div className="service-card-actions">
+                  <button
+                    type="button"
+                    className="btn-orcamentos"
+                    onClick={() => handleVerOrcamentos(servico.id)}
+                  >
+                    Ver Orçamentos
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn-delete"
+                    onClick={() => handleDeletar(servico.id)}
+                  >
+                    Excluir
+                  </button>
+                </div>
+              </article>
             ))}
           </div>
         )}

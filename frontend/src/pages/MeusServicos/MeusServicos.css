@@ -140,21 +140,54 @@
   overflow: hidden;
 }
 
+.service-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  justify-content: flex-end;
+}
+
+.service-card-title-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.service-card-title-link:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.btn-orcamentos {
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-orcamentos:hover {
+  background-color: #1d4ed8;
+}
+
 .btn-delete {
   background-color: transparent;
-  color: #ef4444;
-  border: 1px solid #fca5a5;
-  font-weight: 600;
-  font-size: 0.85rem;
-  padding: 0.5rem 0.875rem;
+  color: #dc2626;
+  border: 1px solid #dc2626;
+  padding: 0.45rem 0.85rem;
   border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .btn-delete:hover {
-  background-color: #fef2f2;
-  border-color: #ef4444;
+  background-color: #fee2e2;
 }
 
 /* Alerta de Erro */
