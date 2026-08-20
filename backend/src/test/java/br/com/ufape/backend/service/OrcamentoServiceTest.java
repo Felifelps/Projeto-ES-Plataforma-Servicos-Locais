@@ -3,6 +3,7 @@ package br.com.ufape.backend.service;
 import br.com.ufape.backend.dto.OrcamentoRequestDto;
 import br.com.ufape.backend.dto.OrcamentoResponderRequestDto;
 import br.com.ufape.backend.dto.OrcamentoResponseDto;
+import br.com.ufape.backend.enums.StatusServico;
 import br.com.ufape.backend.model.*;
 import br.com.ufape.backend.repository.OrcamentoRepository;
 import br.com.ufape.backend.repository.ServicoRepository;
@@ -159,5 +160,29 @@ class OrcamentoServiceTest {
         assertEquals("RESPONDIDO", resultado.status_resposta());
         assertEquals(new BigDecimal("500.00"), resultado.valor_resposta());
         assertEquals("Consigo fazer o serviço na quinta-feira", resultado.descricao_resposta());
+    }
+
+    @Test
+    void deveAceitarOrcamentoEVincularClienteAoServico() {
+        configurarServicoValido();
+        ReflectionTestUtils.setField(solicitante, "id", 20L);
+        servico.setStatus(StatusServico.DISPONIVEL);
+
+        Orcamento orcamentoNoBanco = new Orcamento();
+        ReflectionTestUtils.setField(orcamentoNoBanco, "id", 1L);
+        orcamentoNoBanco.setPrestador(prestador);
+        orcamentoNoBanco.setSolicitante(solicitante);
+        orcamentoNoBanco.setServico(servico);
+        orcamentoNoBanco.setStatus_resposta("RESPONDIDO");
+
+        when(orcamentoRepository.findById(1L)).thenReturn(Optional.of(orcamentoNoBanco));
+        when(orcamentoRepository.save(any(Orcamento.class))).thenAnswer(i -> i.getArgument(0));
+
+        OrcamentoResponseDto resultado = orcamentoService.aceitar(1L, solicitante);
+
+        assertNotNull(resultado);
+        assertEquals("ACEITO", resultado.status_resposta());
+        assertEquals(solicitante, servico.getCliente());
+        assertEquals(StatusServico.EM_ANDAMENTO, servico.getStatus());
     }
 }
