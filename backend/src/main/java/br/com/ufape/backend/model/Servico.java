@@ -1,6 +1,7 @@
 package br.com.ufape.backend.model;
 
 import br.com.ufape.backend.enums.FormaCobranca;
+import br.com.ufape.backend.enums.StatusServico;
 import jakarta.persistence.*;
 
 @Entity
@@ -37,6 +38,14 @@ public class Servico {
     @JoinColumn(name = "provider_profile_id", nullable = false)
     private ProviderProfile prestador;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_user_id")
+    private User cliente;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private StatusServico status;
+
     public Servico() {}
 
     public Long getId() { return id; }
@@ -54,4 +63,8 @@ public class Servico {
     public void setCategoria(ServiceCategory categoria) { this.categoria = categoria; }
     public ProviderProfile getPrestador() { return prestador; }
     public void setPrestador(ProviderProfile prestador) { this.prestador = prestador; }
+    public User getCliente() { return cliente; }
+    public void setCliente(User cliente) { this.cliente = cliente; }
+    public StatusServico getStatus() { return status; }
+    public void setStatus(StatusServico status) { this.status = status; }
 }
