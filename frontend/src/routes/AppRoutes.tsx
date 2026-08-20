@@ -9,6 +9,7 @@ import Servicos from '../pages/Servicos/Servicos';
 import ServicoDetalhe from '../pages/ServicoDetalhe/ServicoDetalhe';
 import MeusServicos from '../pages/MeusServicos/MeusServicos';
 import SolicitarOrcamento from '../pages/SolicitarOrcamento/SolicitarOrcamento';
+import AvaliarPrestador from '../pages/AvaliarPrestador/AvaliarPrestador';
 
 export default function AppRoutes() {
   return (
@@ -26,6 +27,10 @@ export default function AppRoutes() {
         <Route
           path="/servicos/:id/solicitar-orcamento"
           element={<SolicitarOrcamento />}
+        />
+        <Route
+          path="/servicos/:id/avaliar-prestador"
+          element={<AvaliarPrestador />}
         />
       </Route>
 
