@@ -19,4 +19,6 @@ public interface ServicoRepository extends JpaRepository<Servico, Long> {
     );
     
     List<Servico> findByPrestadorUserId(Long usuarioId);
+
+    List<Servico> findByClienteId(Long usuarioId);
 }
