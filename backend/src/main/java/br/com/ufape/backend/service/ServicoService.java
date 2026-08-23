@@ -1,5 +1,6 @@
 package br.com.ufape.backend.service;
 
+import br.com.ufape.backend.dto.ServicoContratadoResponseDto;
 import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
 import br.com.ufape.backend.dto.ServicoResumoResponseDto;
@@ -84,6 +85,20 @@ public class ServicoService {
                 s.getLocalizacao(),
                 s.getAreaAtendimento(),
                 s.getPrestador().getUser().getName()
+        )).collect(Collectors.toList());
+    }
+
+    public List<ServicoContratadoResponseDto> buscarContratadosPorCliente(Long usuarioId) {
+        List<Servico> servicos = servicoRepository.findByClienteId(usuarioId);
+
+        return servicos.stream().map(s -> new ServicoContratadoResponseDto(
+                s.getId(),
+                s.getTitulo(),
+                s.getCategoria().getName(),
+                s.getLocalizacao(),
+                s.getAreaAtendimento(),
+                s.getPrestador().getUser().getName(),
+                s.getStatus()
         )).collect(Collectors.toList());
     }
 
