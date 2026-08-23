@@ -98,8 +98,16 @@ public class ServicoService {
                 s.getLocalizacao(),
                 s.getAreaAtendimento(),
                 s.getPrestador().getUser().getName(),
-                s.getStatus()
+                mapearStatusContratado(s.getStatus())
         )).collect(Collectors.toList());
+    }
+
+    private String mapearStatusContratado(StatusServico status) {
+        if (status == StatusServico.REALIZADO) {
+            return "CONCLUIDO";
+        }
+
+        return status.name();
     }
 
     public ServicoDetalheResponseDto buscarPorId(Long id) {

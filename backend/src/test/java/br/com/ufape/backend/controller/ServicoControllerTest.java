@@ -3,7 +3,6 @@ package br.com.ufape.backend.controller;
 import br.com.ufape.backend.dto.AvaliacaoRequestDto;
 import br.com.ufape.backend.dto.AvaliacaoResponseDto;
 import br.com.ufape.backend.dto.ServicoContratadoResponseDto;
-import br.com.ufape.backend.enums.StatusServico;
 import br.com.ufape.backend.enums.UserRole;
 import br.com.ufape.backend.exception.AvaliacaoDuplicadaException;
 import br.com.ufape.backend.exception.ServicoNaoDisponivelParaAvaliacaoException;
@@ -99,7 +98,7 @@ class ServicoControllerTest {
                         "Boa Viagem",
                         "Recife",
                         "Carlos Prestador",
-                        StatusServico.CONTRATADO
+                        "CONTRATADO"
                 ),
                 new ServicoContratadoResponseDto(
                         2L,
@@ -108,7 +107,7 @@ class ServicoControllerTest {
                         "Casa Amarela",
                         "Recife",
                         "Marcos Pintor",
-                        StatusServico.EM_ANDAMENTO
+                        "EM_ANDAMENTO"
                 )
         );
 

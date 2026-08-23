@@ -1,5 +1,6 @@
 package br.com.ufape.backend.service;
 
+import br.com.ufape.backend.dto.ServicoContratadoResponseDto;
 import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
 import br.com.ufape.backend.enums.StatusServico;
@@ -24,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import br.com.ufape.backend.enums.FormaCobranca;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -166,5 +168,113 @@ class ServicoServiceTest {
         );
         
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
+
+    @Test
+    void deveBuscarServicosContratadosPorCliente() {
+        Long clienteId = 10L;
+
+        User cliente = new User();
+        cliente.setId(clienteId);
+
+        User prestadorUser = new User();
+        prestadorUser.setName("Carlos Prestador");
+
+        ProviderProfile perfil = new ProviderProfile();
+        perfil.setUser(prestadorUser);
+
+        ServiceCategory categoria = new ServiceCategory("Eletricista");
+
+        Servico servico = new Servico();
+        ReflectionTestUtils.setField(servico, "id", 1L);
+        servico.setTitulo("Instalação Elétrica");
+        servico.setCategoria(categoria);
+        servico.setLocalizacao("Boa Viagem");
+        servico.setAreaAtendimento("Recife");
+        servico.setPrestador(perfil);
+        servico.setCliente(cliente);
+        servico.setStatus(StatusServico.CONTRATADO);
+
+        when(servicoRepository.findByClienteId(clienteId)).thenReturn(List.of(servico));
+
+        List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
+
+        assertEquals(1, resultado.size());
+        assertEquals(1L, resultado.get(0).id());
+        assertEquals("Instalação Elétrica", resultado.get(0).titulo());
+        assertEquals("Eletricista", resultado.get(0).categoria());
+        assertEquals("Boa Viagem", resultado.get(0).bairro());
+        assertEquals("Recife", resultado.get(0).cidade());
+        assertEquals("Carlos Prestador", resultado.get(0).nomePrestador());
+        assertEquals("CONTRATADO", resultado.get(0).statusAtual());
+    }
+
+    @Test
+    void deveMapearStatusAtualAoBuscarServicosContratadosPorCliente() {
+        Long clienteId = 20L;
+
+        User prestadorUser = new User();
+        prestadorUser.setName("Marcos Pintor");
+
+        ProviderProfile perfil = new ProviderProfile();
+        perfil.setUser(prestadorUser);
+
+        ServiceCategory categoria = new ServiceCategory("Pintor");
+
+        Servico servico = new Servico();
+        ReflectionTestUtils.setField(servico, "id", 2L);
+        servico.setTitulo("Pintura Residencial");
+        servico.setCategoria(categoria);
+        servico.setLocalizacao("Casa Amarela");
+        servico.setAreaAtendimento("Recife");
+        servico.setPrestador(perfil);
+        servico.setStatus(StatusServico.EM_ANDAMENTO);
+
+        when(servicoRepository.findByClienteId(clienteId)).thenReturn(List.of(servico));
+
+        List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
+
+        assertEquals(1, resultado.size());
+        assertEquals("EM_ANDAMENTO", resultado.get(0).statusAtual());
+    }
+
+    @Test
+    void deveMapearStatusRealizadoComoConcluidoAoBuscarServicosContratadosPorCliente() {
+        Long clienteId = 40L;
+
+        User prestadorUser = new User();
+        prestadorUser.setName("Joao Prestador");
+
+        ProviderProfile perfil = new ProviderProfile();
+        perfil.setUser(prestadorUser);
+
+        ServiceCategory categoria = new ServiceCategory("Pedreiro");
+
+        Servico servico = new Servico();
+        ReflectionTestUtils.setField(servico, "id", 3L);
+        servico.setTitulo("Reforma de Muro");
+        servico.setCategoria(categoria);
+        servico.setLocalizacao("Ipsep");
+        servico.setAreaAtendimento("Recife");
+        servico.setPrestador(perfil);
+        servico.setStatus(StatusServico.REALIZADO);
+
+        when(servicoRepository.findByClienteId(clienteId)).thenReturn(List.of(servico));
+
+        List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
+
+        assertEquals(1, resultado.size());
+        assertEquals("CONCLUIDO", resultado.get(0).statusAtual());
+    }
+
+    @Test
+    void deveRetornarListaVaziaQuandoClienteNaoPossuirServicosContratados() {
+        Long clienteId = 30L;
+        when(servicoRepository.findByClienteId(clienteId)).thenReturn(List.of());
+
+        List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
+
+        assertNotNull(resultado);
+        assertTrue(resultado.isEmpty());
     }
 }
