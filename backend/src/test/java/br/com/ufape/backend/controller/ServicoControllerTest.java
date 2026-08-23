@@ -2,6 +2,8 @@ package br.com.ufape.backend.controller;
 
 import br.com.ufape.backend.dto.AvaliacaoRequestDto;
 import br.com.ufape.backend.dto.AvaliacaoResponseDto;
+import br.com.ufape.backend.dto.ServicoContratadoResponseDto;
+import br.com.ufape.backend.enums.StatusServico;
 import br.com.ufape.backend.enums.UserRole;
 import br.com.ufape.backend.exception.AvaliacaoDuplicadaException;
 import br.com.ufape.backend.exception.ServicoNaoDisponivelParaAvaliacaoException;
@@ -24,10 +26,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -74,6 +79,76 @@ class ServicoControllerTest {
                         .content(objectMapper.writeValueAsString(new AvaliacaoRequestDto(5, "Excelente"))))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value(401));
+    }
+
+    @Test
+    void deveRetornar401QuandoUsuarioNaoEstaAutenticadoAoListarServicosContratados() throws Exception {
+        mockMvc.perform(get("/api/servicos/contratados")
+                        .contextPath("/api"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(401));
+    }
+
+    @Test
+    void deveRetornarServicosContratadosQuandoUsuarioAutenticadoPossuirServicos() throws Exception {
+        List<ServicoContratadoResponseDto> response = List.of(
+                new ServicoContratadoResponseDto(
+                        1L,
+                        "Instalação Elétrica",
+                        "Eletricista",
+                        "Boa Viagem",
+                        "Recife",
+                        "Carlos Prestador",
+                        StatusServico.CONTRATADO
+                ),
+                new ServicoContratadoResponseDto(
+                        2L,
+                        "Pintura Residencial",
+                        "Pintor",
+                        "Casa Amarela",
+                        "Recife",
+                        "Marcos Pintor",
+                        StatusServico.EM_ANDAMENTO
+                )
+        );
+
+        when(servicoService.buscarContratadosPorCliente(eq(usuarioAutenticado.getId()))).thenReturn(response);
+
+        mockMvc.perform(get("/api/servicos/contratados")
+                        .contextPath("/api")
+                        .with(SecurityMockMvcRequestPostProcessors.authentication(
+                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                                        usuarioAutenticado,
+                                        null,
+                                        usuarioAutenticado.getAuthorities()
+                                ))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].titulo").value("Instalação Elétrica"))
+                .andExpect(jsonPath("$[0].categoria").value("Eletricista"))
+                .andExpect(jsonPath("$[0].bairro").value("Boa Viagem"))
+                .andExpect(jsonPath("$[0].cidade").value("Recife"))
+                .andExpect(jsonPath("$[0].nomePrestador").value("Carlos Prestador"))
+                .andExpect(jsonPath("$[0].statusAtual").value("CONTRATADO"))
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[1].statusAtual").value("EM_ANDAMENTO"));
+    }
+
+    @Test
+    void deveRetornarListaVaziaQuandoUsuarioAutenticadoNaoPossuirServicosContratados() throws Exception {
+        when(servicoService.buscarContratadosPorCliente(anyLong())).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/servicos/contratados")
+                        .contextPath("/api")
+                        .with(SecurityMockMvcRequestPostProcessors.authentication(
+                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                                        usuarioAutenticado,
+                                        null,
+                                        usuarioAutenticado.getAuthorities()
+                                ))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isEmpty());
     }
 
     @Test
