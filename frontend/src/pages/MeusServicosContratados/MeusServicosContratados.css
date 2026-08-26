@@ -1,0 +1,211 @@
+/* Container e Header da Página */
+.servicos-prestador-page {
+  padding: 2rem 1rem;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 70px);
+}
+
+.servicos-prestador-page .container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 1.8rem;
+  color: #212529;
+  margin-bottom: 0.5rem;
+}
+
+.page-header p {
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+/* Alertas de Sucesso e Erro */
+.alert {
+  padding: 0.875rem 1.25rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+}
+
+.alert-success {
+  background-color: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #badbcc;
+}
+
+/* Estado de Carregamento e Vazio */
+.status-loading,
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: #ffffff;
+  border-radius: 8px;
+  color: #6c757d;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Grid de Cards */
+.servicos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Card do Serviço */
+.servico-prestador-card {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.servico-prestador-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Header do Card */
+.servico-prestador-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.servico-prestador-card .card-header h3 {
+  font-size: 1.15rem;
+  color: #1a1a1a;
+  margin: 0 0 0.25rem 0;
+}
+
+.categoria-badge {
+  font-size: 0.75rem;
+  background-color: #e9ecef;
+  color: #495057;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Badges de Status do Serviço */
+.status-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.65rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.status-pendente {
+  background-color: #fff3cd;
+  color: #664d03;
+}
+
+.status-em_andamento {
+  background-color: #cff4fc;
+  color: #055160;
+}
+
+.status-concluido {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+
+.status-cancelado {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+/* Corpo do Card */
+.servico-prestador-card .card-body {
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.servico-prestador-card .card-body p {
+  margin: 0.4rem 0;
+}
+
+/* Ações e Botões de Transição */
+.card-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f1f3f5;
+}
+
+.btn-status {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+  text-align: center;
+}
+
+.btn-status:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Cores específicas por transição */
+.btn-em_andamento {
+  background-color: #0d6efd;
+  color: #ffffff;
+}
+
+.btn-em_andamento:hover:not(:disabled) {
+  background-color: #0b5ed7;
+}
+
+.btn-concluido {
+  background-color: #198754;
+  color: #ffffff;
+}
+
+.btn-concluido:hover:not(:disabled) {
+  background-color: #157347;
+}
+
+.btn-cancelado {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+.btn-cancelado:hover:not(:disabled) {
+  background-color: #bb2d3b;
+}
+
+.text-muted {
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-style: italic;
+}
