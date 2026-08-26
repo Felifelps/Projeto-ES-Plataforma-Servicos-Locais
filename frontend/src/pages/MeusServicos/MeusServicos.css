@@ -173,6 +173,21 @@
 .btn-orcamentos:hover {
   background-color: #1d4ed8;
 }
+.btn-contratados {
+  background-color: #08750eb1;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 0.875rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-contratados:hover {
+  background-color: rgba(13, 253, 29, 0.718);
+}
 
 .btn-delete {
   background-color: transparent;
