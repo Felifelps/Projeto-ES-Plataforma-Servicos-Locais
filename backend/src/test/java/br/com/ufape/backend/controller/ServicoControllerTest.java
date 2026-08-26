@@ -19,10 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -89,6 +91,16 @@ class ServicoControllerTest {
     }
 
     @Test
+    void deveRetornar403QuandoUsuarioAutenticadoNaoPossuirRoleUserAoListarServicosContratados() throws Exception {
+        User prestadorAutenticado = criarUsuarioAutenticado(2L, "Carlos", "carlos@email.com", UserRole.PRESTADOR);
+
+        mockMvc.perform(get("/api/servicos/contratados")
+                        .contextPath("/api")
+                        .with(authentication(prestadorAutenticado)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void deveRetornarServicosContratadosQuandoUsuarioAutenticadoPossuirServicos() throws Exception {
         List<ServicoContratadoResponseDto> response = List.of(
                 new ServicoContratadoResponseDto(
@@ -115,12 +127,7 @@ class ServicoControllerTest {
 
         mockMvc.perform(get("/api/servicos/contratados")
                         .contextPath("/api")
-                        .with(SecurityMockMvcRequestPostProcessors.authentication(
-                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                                        usuarioAutenticado,
-                                        null,
-                                        usuarioAutenticado.getAuthorities()
-                                ))))
+                        .with(authentication(usuarioAutenticado)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].titulo").value("Instalação Elétrica"))
@@ -139,12 +146,7 @@ class ServicoControllerTest {
 
         mockMvc.perform(get("/api/servicos/contratados")
                         .contextPath("/api")
-                        .with(SecurityMockMvcRequestPostProcessors.authentication(
-                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                                        usuarioAutenticado,
-                                        null,
-                                        usuarioAutenticado.getAuthorities()
-                                ))))
+                        .with(authentication(usuarioAutenticado)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$").isEmpty());
@@ -166,12 +168,7 @@ class ServicoControllerTest {
 
         mockMvc.perform(post("/api/servicos/1/avaliacoes")
                         .contextPath("/api")
-                        .with(SecurityMockMvcRequestPostProcessors.authentication(
-                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                                        usuarioAutenticado,
-                                        null,
-                                        usuarioAutenticado.getAuthorities()
-                                )))
+                        .with(authentication(usuarioAutenticado))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new AvaliacaoRequestDto(5, "Excelente atendimento"))))
                 .andExpect(status().isCreated())
@@ -187,12 +184,7 @@ class ServicoControllerTest {
     void deveRetornar400QuandoNotaNaoForInformada() throws Exception {
         mockMvc.perform(post("/api/servicos/1/avaliacoes")
                         .contextPath("/api")
-                        .with(SecurityMockMvcRequestPostProcessors.authentication(
-                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                                        usuarioAutenticado,
-                                        null,
-                                        usuarioAutenticado.getAuthorities()
-                                )))
+                        .with(authentication(usuarioAutenticado))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"comentario\":\"Excelente atendimento\"}"))
                 .andExpect(status().isBadRequest())
@@ -207,12 +199,7 @@ class ServicoControllerTest {
 
         mockMvc.perform(post("/api/servicos/999/avaliacoes")
                         .contextPath("/api")
-                        .with(SecurityMockMvcRequestPostProcessors.authentication(
-                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                                        usuarioAutenticado,
-                                        null,
-                                        usuarioAutenticado.getAuthorities()
-                                )))
+                        .with(authentication(usuarioAutenticado))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new AvaliacaoRequestDto(5, "Excelente atendimento"))))
                 .andExpect(status().isNotFound())
@@ -227,12 +214,7 @@ class ServicoControllerTest {
 
         mockMvc.perform(post("/api/servicos/1/avaliacoes")
                         .contextPath("/api")
-                        .with(SecurityMockMvcRequestPostProcessors.authentication(
-                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                                        usuarioAutenticado,
-                                        null,
-                                        usuarioAutenticado.getAuthorities()
-                                )))
+                        .with(authentication(usuarioAutenticado))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new AvaliacaoRequestDto(5, "Excelente atendimento"))))
                 .andExpect(status().isForbidden())
@@ -248,16 +230,27 @@ class ServicoControllerTest {
 
         mockMvc.perform(post("/api/servicos/1/avaliacoes")
                         .contextPath("/api")
-                        .with(SecurityMockMvcRequestPostProcessors.authentication(
-                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                                        usuarioAutenticado,
-                                        null,
-                                        usuarioAutenticado.getAuthorities()
-                                )))
+                        .with(authentication(usuarioAutenticado))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new AvaliacaoRequestDto(5, "Excelente atendimento"))))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.message").value("O usuário já avaliou este serviço"));
+    }
+
+    private User criarUsuarioAutenticado(Long id, String nome, String email, UserRole role) {
+        User usuario = new User();
+        usuario.setId(id);
+        usuario.setName(nome);
+        usuario.setEmail(email);
+        usuario.setRole(role);
+        usuario.setPassword("senha123");
+        return usuario;
+    }
+
+    private RequestPostProcessor authentication(User usuario) {
+        return SecurityMockMvcRequestPostProcessors.authentication(
+                new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities())
+        );
     }
 }
