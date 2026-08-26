@@ -4,6 +4,7 @@ import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
 import br.com.ufape.backend.dto.ServicoResumoResponseDto;
 import br.com.ufape.backend.enums.StatusServico;
+import br.com.ufape.backend.exception.ServicoNotFoundException;
 import br.com.ufape.backend.model.ProviderProfile;
 import br.com.ufape.backend.model.ServiceCategory;
 import br.com.ufape.backend.model.Servico;
@@ -116,5 +117,28 @@ public class ServicoService {
         }
 
         servicoRepository.delete(servico);
-}       
+    }
+    
+    @Transactional
+    public void atualizarStatus(Long idServico, StatusServico novoStatus, Long idUsuarioLogado) {
+        
+        // erro 404
+        Servico servico = servicoRepository.findById(idServico)
+           .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Serviço com ID " + idServico + " não encontrado."));
+
+        // erro 403 
+        if (!servico.getPrestador().getUser().getId().equals(idUsuarioLogado)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para atualizar este serviço.");
+        }
+
+        // erro 400
+        if (!servico.getStatus().isMudancaValida(novoStatus)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Mudança de status não permitida.");
+        }
+
+        // salva o novo status
+        servico.setStatus(novoStatus);
+        servicoRepository.save(servico);
+    }
+
 }
