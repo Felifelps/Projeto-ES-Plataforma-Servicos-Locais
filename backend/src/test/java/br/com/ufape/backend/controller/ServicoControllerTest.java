@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ActiveProfiles;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -186,4 +188,54 @@ class ServicoControllerTest {
                 .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.message").value("O usuário já avaliou este serviço"));
     }
+    
+    @Test
+    @WithMockUser 
+    void deveAtualizarStatusComSucesso() throws Exception {
+        
+        mockMvc.perform(put("/api/servicos/1/status")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"status\": \"EM_ANDAMENTO\" }"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deveRetornar401SeNaoAutenticado() throws Exception {
+        mockMvc.perform(put("/api/servicos/1/status")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"status\": \"EM_ANDAMENTO\" }"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    void deveRetornar403SeNaoForODono() throws Exception {
+         
+         mockMvc.perform(put("/api/servicos/1/status")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"status\": \"EM_ANDAMENTO\" }"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser
+    void deveRetornar400SeTransicaoInvalida() throws Exception {
+         
+         mockMvc.perform(put("/api/servicos/1/status")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"status\": \"CONTRATADO\" }")) 
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    void deveRetornar404SeServicoNaoExistir() throws Exception {
+        mockMvc.perform(put("/api/servicos/999/status")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"status\": \"EM_ANDAMENTO\" }"))
+                .andExpect(status().isNotFound());
+    }
+
+
+
 }
