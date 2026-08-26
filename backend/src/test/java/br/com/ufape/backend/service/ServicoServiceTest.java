@@ -3,6 +3,7 @@ package br.com.ufape.backend.service;
 import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
 import br.com.ufape.backend.enums.StatusServico;
+import br.com.ufape.backend.exception.ServicoNotFoundException;
 import br.com.ufape.backend.model.*;
 import br.com.ufape.backend.repository.ProviderProfileRepository;
 import br.com.ufape.backend.repository.ServiceCategoryRepository;
@@ -28,6 +29,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -165,6 +168,97 @@ class ServicoServiceTest {
             () -> servicoService.buscarPorId(idInexistente)
         );
         
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
+
+    @Test
+    void deveAtualizarStatusDeContratadoParaEmAndamento() {
+        Servico servico = new Servico();
+        servico.setStatus(StatusServico.CONTRATADO);
+        
+        User dono = new User();
+        dono.setId(1L);
+        ProviderProfile perfil = new ProviderProfile();
+        perfil.setUser(dono);
+        servico.setPrestador(perfil);
+
+        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+
+        servicoService.atualizarStatus(1L, StatusServico.EM_ANDAMENTO, 1L);
+
+        assertEquals(StatusServico.EM_ANDAMENTO, servico.getStatus());
+        verify(servicoRepository).save(servico);
+    }
+
+    @Test
+    void deveAtualizarStatusDeEmAndamentoParaRealizado() {
+        Servico servico = new Servico();
+        servico.setStatus(StatusServico.EM_ANDAMENTO);
+        
+        User dono = new User();
+        dono.setId(1L);
+        ProviderProfile perfil = new ProviderProfile();
+        perfil.setUser(dono);
+        servico.setPrestador(perfil);
+
+        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+
+        servicoService.atualizarStatus(1L, StatusServico.REALIZADO, 1L);
+
+        assertEquals(StatusServico.REALIZADO, servico.getStatus());
+        verify(servicoRepository).save(servico);
+    }
+
+    @Test
+    void deveLancarErro400QuandoTentarPularEtapaDeDisponivelParaRealizado() {
+        Servico servico = new Servico();
+        servico.setStatus(StatusServico.DISPONIVEL); // Status inicial
+        
+        User dono = new User();
+        dono.setId(1L);
+        ProviderProfile perfil = new ProviderProfile();
+        perfil.setUser(dono);
+        servico.setPrestador(perfil);
+
+        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+            servicoService.atualizarStatus(1L, StatusServico.REALIZADO, 1L); // Tentando pular etapas
+        });
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        verify(servicoRepository, never()).save(any()); // Garante que não salvou no banco
+    }
+
+    @Test
+    void deveLancarErro403AoTentarAtualizarServicoQueNaoLhePertence() {
+        Servico servico = new Servico();
+        servico.setStatus(StatusServico.CONTRATADO);
+        
+        User donoReal = new User();
+        donoReal.setId(1L); // Dono do serviço é o ID 1
+        ProviderProfile perfil = new ProviderProfile();
+        perfil.setUser(donoReal);
+        servico.setPrestador(perfil);
+
+        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+            servicoService.atualizarStatus(1L, StatusServico.EM_ANDAMENTO, 999L); // Quem faz a requisição é o ID 999
+        });
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+        verify(servicoRepository, never()).save(any());
+    }
+
+    @Test
+    void deveLancarErro404AoAtualizarStatusDeServicoInexistente() {
+        when(servicoRepository.findById(99L)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+            servicoService.atualizarStatus(99L, StatusServico.EM_ANDAMENTO, 1L);
+        });
+
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
     }
 }
