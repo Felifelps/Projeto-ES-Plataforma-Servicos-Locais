@@ -36,13 +36,13 @@ public class Orcamento {
     private User solicitante;
     // resposta do prestador para o solicitante
     @Column(name = "valor_resposta", precision = 10, scale = 2)
-    private BigDecimal valor_resposta;
+    private BigDecimal valorResposta;
 
     @Column(name = "descricao_resposta", columnDefinition = "TEXT")
-    private String descricao_resposta;
+    private String descricaoResposta;
 
     @Column(name = "status_resposta", nullable = false, length = 20)
-    private String status_resposta = "PENDENTE";
+    private String statusResposta = "PENDENTE";
 
     public Orcamento() {}
 
@@ -59,10 +59,10 @@ public class Orcamento {
     public void setPrestador(ProviderProfile prestador) { this.prestador = prestador; }
     public User getSolicitante() { return solicitante; }
     public void setSolicitante(User solicitante) { this.solicitante = solicitante; }
-    public BigDecimal getValor_resposta() { return valor_resposta; }
-    public void setValor_resposta(BigDecimal valor_resposta) { this.valor_resposta = valor_resposta; }
-    public String getDescricao_resposta() { return descricao_resposta; }
-    public void setDescricao_resposta(String descricao_resposta) { this.descricao_resposta = descricao_resposta; }
-    public String getStatus_resposta() { return status_resposta; }
-    public void setStatus_resposta(String status_resposta) { this.status_resposta = status_resposta; }  
+    public BigDecimal getValorResposta() { return valorResposta; }
+    public void setValorResposta(BigDecimal valorResposta) { this.valorResposta = valorResposta; }
+    public String getDescricaoResposta() { return descricaoResposta; }
+    public void setDescricaoResposta(String descricaoResposta) { this.descricaoResposta = descricaoResposta; }
+    public String getStatusResposta() { return statusResposta; }
+    public void setStatusResposta(String statusResposta) { this.statusResposta = statusResposta; }  
 }

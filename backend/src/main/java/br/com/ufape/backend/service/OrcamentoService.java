@@ -71,9 +71,9 @@ public class OrcamentoService {
                 o.getPrestador().getUser().getName(),
                 o.getSolicitante().getName(),
                 o.getSolicitante().getEmail(),
-                o.getDescricao_resposta(),
-                o.getStatus_resposta(),
-                o.getValor_resposta()
+                o.getDescricaoResposta(),
+                o.getStatusResposta(),
+                o.getValorResposta()
         );
     }
 
@@ -91,13 +91,13 @@ public class OrcamentoService {
         }
 
         // lanca Erro 400
-        if ("RESPONDIDO".equals(orcamento.getStatus_resposta())) {
+        if ("RESPONDIDO".equals(orcamento.getStatusResposta())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Este orçamento já foi respondido");
         }
 
-        orcamento.setValor_resposta(dto.valor_resposta());
-        orcamento.setDescricao_resposta(dto.descricao_resposta());
-        orcamento.setStatus_resposta("RESPONDIDO");
+        orcamento.setValorResposta(dto.valorResposta());
+        orcamento.setDescricaoResposta(dto.descricaoResposta());
+        orcamento.setStatusResposta("RESPONDIDO");
 
         Orcamento orcamentoAtualizado = orcamentoRepository.save(orcamento);
 
@@ -114,7 +114,7 @@ public class OrcamentoService {
         }
 
         // Só pode aceitar se o prestador já tiver respondido
-        if (!"RESPONDIDO".equals(orcamento.getStatus_resposta())) {
+        if (!"RESPONDIDO".equals(orcamento.getStatusResposta())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O orçamento precisa estar respondido para ser aceito");
         }
 
@@ -123,7 +123,7 @@ public class OrcamentoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Este serviço já possui um orçamento aceito");
         }
 
-        orcamento.setStatus_resposta("ACEITO");
+        orcamento.setStatusResposta("ACEITO");
         servico.setCliente(clienteAutenticado);
         servico.setStatus(StatusServico.CONTRATADO);
         Orcamento orcamentoAtualizado = orcamentoRepository.save(orcamento);
@@ -140,11 +140,11 @@ public class OrcamentoService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para recusar este orçamento");
         }
 
-        if (!"RESPONDIDO".equals(orcamento.getStatus_resposta())) {
+        if (!"RESPONDIDO".equals(orcamento.getStatusResposta())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O orçamento precisa estar respondido para ser recusado");
         }
 
-        orcamento.setStatus_resposta("RECUSADO");
+        orcamento.setStatusResposta("RECUSADO");
         Orcamento orcamentoAtualizado = orcamentoRepository.save(orcamento);
 
         return toResponseDto(orcamentoAtualizado);

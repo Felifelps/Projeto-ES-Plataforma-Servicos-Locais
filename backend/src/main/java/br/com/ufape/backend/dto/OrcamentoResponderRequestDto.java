@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 
 public record OrcamentoResponderRequestDto(
         @NotNull(message = "O valor estimado é obrigatório")
-        BigDecimal valor_resposta,
+        BigDecimal valorResposta,
 
         @NotBlank(message = "A resposta/condições não pode ficar em branco")
-        String descricao_resposta
+        String descricaoResposta
 ) {}
