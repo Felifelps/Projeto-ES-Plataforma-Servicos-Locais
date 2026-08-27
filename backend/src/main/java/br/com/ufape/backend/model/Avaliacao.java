@@ -40,7 +40,9 @@ public class Avaliacao {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    public Avaliacao() {}
+    public Avaliacao() {
+        // Construtor vazio exigido pelo JPA
+    }
 
     @PrePersist
     public void prePersist() {

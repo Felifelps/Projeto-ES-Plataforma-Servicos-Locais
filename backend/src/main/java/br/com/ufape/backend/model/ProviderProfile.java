@@ -53,7 +53,9 @@ public class ProviderProfile {
     @NotBlank(message = "Descrição é obrigatória")
     private String description;
 
-    public ProviderProfile() {}
+    public ProviderProfile() {
+        // Construtor vazio exigido pelo JPA
+    }
 
     public Long getId() {
         return id;

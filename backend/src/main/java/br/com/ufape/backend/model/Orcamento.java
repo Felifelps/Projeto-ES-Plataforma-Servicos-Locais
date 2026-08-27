@@ -4,10 +4,13 @@ import java.math.BigDecimal;
 
 import jakarta.persistence.*;
 
+
+
+
 @Entity
 @Table(name = "orcamentos")
 public class Orcamento {
-
+    
     @Id
     @SequenceGenerator(name = "orcamento_id_seq", allocationSize = 1)
     @GeneratedValue(generator = "orcamento_id_seq", strategy = GenerationType.SEQUENCE)
@@ -44,8 +47,9 @@ public class Orcamento {
     @Column(name = "status_resposta", nullable = false, length = 20)
     private String statusResposta = "PENDENTE";
 
-    public Orcamento() {}
-
+    public Orcamento() {
+        // Construtor vazio exigido pelo JPA}
+    }    
     public Long getId() { return id; }
     public String getDescricaoNecessidade() { return descricaoNecessidade; }
     public void setDescricaoNecessidade(String descricaoNecessidade) { this.descricaoNecessidade = descricaoNecessidade; }

@@ -19,6 +19,8 @@ import java.util.List;
 
 @Service
 public class OrcamentoService {
+    private static final String ERRO_ORCAMENTO_NAO_ENCONTRADO = "Orçamento não encontrado";
+    private static final String STATUS_RESPONDIDO = "RESPONDIDO";
 
     private final OrcamentoRepository orcamentoRepository;
     private final ServicoRepository servicoRepository;
@@ -82,22 +84,22 @@ public class OrcamentoService {
         
         // lanca Erro 404
         Orcamento orcamento = orcamentoRepository.findById(orcamentoId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Orçamento não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ERRO_ORCAMENTO_NAO_ENCONTRADO));
 
         //  lanca Erro 403
         Long idDonoDoOrcamento = orcamento.getPrestador().getUser().getId();
-        if (!idDonoDoOrcamento.equals(prestadorAutenticado.getId())) {
+        if (!idDonoDoOrcamento.equals(prestadorAutenticado.getId())) {  
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para responder a este orçamento");
         }
 
         // lanca Erro 400
-        if ("RESPONDIDO".equals(orcamento.getStatusResposta())) {
+        if (STATUS_RESPONDIDO.equals(orcamento.getStatusResposta())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Este orçamento já foi respondido");
         }
 
         orcamento.setValorResposta(dto.valorResposta());
         orcamento.setDescricaoResposta(dto.descricaoResposta());
-        orcamento.setStatusResposta("RESPONDIDO");
+        orcamento.setStatusResposta(STATUS_RESPONDIDO);
 
         Orcamento orcamentoAtualizado = orcamentoRepository.save(orcamento);
 
@@ -106,7 +108,7 @@ public class OrcamentoService {
     @Transactional
     public OrcamentoResponseDto aceitar(Long orcamentoId, User clienteAutenticado) {
         Orcamento orcamento = orcamentoRepository.findById(orcamentoId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Orçamento não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ERRO_ORCAMENTO_NAO_ENCONTRADO));
 
         // Garante que apenas o cliente que criou a solicitação possa aceitar
         if (!orcamento.getSolicitante().getId().equals(clienteAutenticado.getId())) {
@@ -114,7 +116,7 @@ public class OrcamentoService {
         }
 
         // Só pode aceitar se o prestador já tiver respondido
-        if (!"RESPONDIDO".equals(orcamento.getStatusResposta())) {
+        if (!STATUS_RESPONDIDO.equals(orcamento.getStatusResposta())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O orçamento precisa estar respondido para ser aceito");
         }
 
@@ -134,13 +136,13 @@ public class OrcamentoService {
     @Transactional
     public OrcamentoResponseDto recusar(Long orcamentoId, User clienteAutenticado) {
         Orcamento orcamento = orcamentoRepository.findById(orcamentoId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Orçamento não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ERRO_ORCAMENTO_NAO_ENCONTRADO));
 
         if (!orcamento.getSolicitante().getId().equals(clienteAutenticado.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para recusar este orçamento");
         }
 
-        if (!"RESPONDIDO".equals(orcamento.getStatusResposta())) {
+        if (!STATUS_RESPONDIDO.equals(orcamento.getStatusResposta())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O orçamento precisa estar respondido para ser recusado");
         }
 
