@@ -53,3 +53,4 @@ jobs:
           -Dsonar.projectKey=Grupo-ProjetoES_Projeto-ES-Plataforma-Servicos-Locais
           -Dsonar.automaticAnalysis.enabled=false
           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+          -Dsonar.qualitygate.wait=true
