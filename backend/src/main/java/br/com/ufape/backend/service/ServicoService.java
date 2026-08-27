@@ -5,7 +5,6 @@ import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
 import br.com.ufape.backend.dto.ServicoResumoResponseDto;
 import br.com.ufape.backend.enums.StatusServico;
-import br.com.ufape.backend.exception.ServicoNotFoundException;
 import br.com.ufape.backend.model.ProviderProfile;
 import br.com.ufape.backend.model.ServiceCategory;
 import br.com.ufape.backend.model.Servico;
@@ -15,7 +14,6 @@ import br.com.ufape.backend.repository.ServiceCategoryRepository;
 import br.com.ufape.backend.repository.ServicoRepository;
 import jakarta.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

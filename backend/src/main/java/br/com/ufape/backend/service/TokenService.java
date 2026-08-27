@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 
 @Service
@@ -33,8 +34,7 @@ public class TokenService {
                     .withSubject(user.getEmail())
                     .withClaim("name", user.getName())
                     .withClaim("role", user.getRole().name())
-                    .withExpiresAt(LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00")))
-                    .sign(algorithm);
+                    .withExpiresAt(LocalDateTime.now(ZoneId.of("-03:00")).plusHours(2).toInstant(ZoneOffset.of("-03:00")))                    .sign(algorithm);
         }catch (JWTCreationException exception){
             throw new RuntimeException("Erro ao gerar token JWT", exception);
         }
