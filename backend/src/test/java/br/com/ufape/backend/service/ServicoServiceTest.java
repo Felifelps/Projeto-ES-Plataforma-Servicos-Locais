@@ -30,6 +30,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -195,7 +196,10 @@ class ServicoServiceTest {
         servico.setCliente(cliente);
         servico.setStatus(StatusServico.CONTRATADO);
 
-        when(servicoRepository.findByClienteId(clienteId)).thenReturn(List.of(servico));
+        when(servicoRepository.findContratadosByClienteId(
+                eq(clienteId),
+                eq(List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO))
+        )).thenReturn(List.of(servico));
 
         List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
 
@@ -206,11 +210,11 @@ class ServicoServiceTest {
         assertEquals("Boa Viagem", resultado.get(0).bairro());
         assertEquals("Recife", resultado.get(0).cidade());
         assertEquals("Carlos Prestador", resultado.get(0).nomePrestador());
-        assertEquals("CONTRATADO", resultado.get(0).statusAtual());
+        assertEquals(StatusServico.CONTRATADO, resultado.get(0).statusAtual());
     }
 
     @Test
-    void deveMapearStatusAtualAoBuscarServicosContratadosPorCliente() {
+    void deveRetornarStatusAtualAoBuscarServicosContratadosPorCliente() {
         Long clienteId = 20L;
 
         User prestadorUser = new User();
@@ -230,16 +234,19 @@ class ServicoServiceTest {
         servico.setPrestador(perfil);
         servico.setStatus(StatusServico.EM_ANDAMENTO);
 
-        when(servicoRepository.findByClienteId(clienteId)).thenReturn(List.of(servico));
+        when(servicoRepository.findContratadosByClienteId(
+                eq(clienteId),
+                eq(List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO))
+        )).thenReturn(List.of(servico));
 
         List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
 
         assertEquals(1, resultado.size());
-        assertEquals("EM_ANDAMENTO", resultado.get(0).statusAtual());
+        assertEquals(StatusServico.EM_ANDAMENTO, resultado.get(0).statusAtual());
     }
 
     @Test
-    void deveMapearStatusRealizadoComoConcluidoAoBuscarServicosContratadosPorCliente() {
+    void deveRetornarStatusRealizadoAoBuscarServicosContratadosPorCliente() {
         Long clienteId = 40L;
 
         User prestadorUser = new User();
@@ -259,18 +266,24 @@ class ServicoServiceTest {
         servico.setPrestador(perfil);
         servico.setStatus(StatusServico.REALIZADO);
 
-        when(servicoRepository.findByClienteId(clienteId)).thenReturn(List.of(servico));
+        when(servicoRepository.findContratadosByClienteId(
+                eq(clienteId),
+                eq(List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO))
+        )).thenReturn(List.of(servico));
 
         List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
 
         assertEquals(1, resultado.size());
-        assertEquals("CONCLUIDO", resultado.get(0).statusAtual());
+        assertEquals(StatusServico.REALIZADO, resultado.get(0).statusAtual());
     }
 
     @Test
     void deveRetornarListaVaziaQuandoClienteNaoPossuirServicosContratados() {
         Long clienteId = 30L;
-        when(servicoRepository.findByClienteId(clienteId)).thenReturn(List.of());
+        when(servicoRepository.findContratadosByClienteId(
+                eq(clienteId),
+                eq(List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO))
+        )).thenReturn(List.of());
 
         List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
 

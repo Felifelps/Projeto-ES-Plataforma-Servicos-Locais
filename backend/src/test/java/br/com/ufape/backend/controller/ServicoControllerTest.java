@@ -3,6 +3,7 @@ package br.com.ufape.backend.controller;
 import br.com.ufape.backend.dto.AvaliacaoRequestDto;
 import br.com.ufape.backend.dto.AvaliacaoResponseDto;
 import br.com.ufape.backend.dto.ServicoContratadoResponseDto;
+import br.com.ufape.backend.enums.StatusServico;
 import br.com.ufape.backend.enums.UserRole;
 import br.com.ufape.backend.exception.AvaliacaoDuplicadaException;
 import br.com.ufape.backend.exception.ServicoNaoDisponivelParaAvaliacaoException;
@@ -91,13 +92,16 @@ class ServicoControllerTest {
     }
 
     @Test
-    void deveRetornar403QuandoUsuarioAutenticadoNaoPossuirRoleUserAoListarServicosContratados() throws Exception {
+    void devePermitirListarServicosContratadosParaUsuarioAutenticadoComOutraRole() throws Exception {
         User prestadorAutenticado = criarUsuarioAutenticado(2L, "Carlos", "carlos@email.com", UserRole.PRESTADOR);
+        when(servicoService.buscarContratadosPorCliente(eq(prestadorAutenticado.getId()))).thenReturn(List.of());
 
         mockMvc.perform(get("/api/servicos/contratados")
                         .contextPath("/api")
                         .with(authentication(prestadorAutenticado)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isEmpty());
     }
 
     @Test
@@ -110,7 +114,7 @@ class ServicoControllerTest {
                         "Boa Viagem",
                         "Recife",
                         "Carlos Prestador",
-                        "CONTRATADO"
+                        StatusServico.CONTRATADO
                 ),
                 new ServicoContratadoResponseDto(
                         2L,
@@ -119,7 +123,7 @@ class ServicoControllerTest {
                         "Casa Amarela",
                         "Recife",
                         "Marcos Pintor",
-                        "EM_ANDAMENTO"
+                        StatusServico.EM_ANDAMENTO
                 )
         );
 

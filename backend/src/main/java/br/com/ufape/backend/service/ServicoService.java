@@ -89,7 +89,10 @@ public class ServicoService {
     }
 
     public List<ServicoContratadoResponseDto> buscarContratadosPorCliente(Long usuarioId) {
-        List<Servico> servicos = servicoRepository.findByClienteId(usuarioId);
+        List<Servico> servicos = servicoRepository.findContratadosByClienteId(
+                usuarioId,
+                List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO)
+        );
 
         return servicos.stream().map(s -> new ServicoContratadoResponseDto(
                 s.getId(),
@@ -98,16 +101,8 @@ public class ServicoService {
                 s.getLocalizacao(),
                 s.getAreaAtendimento(),
                 s.getPrestador().getUser().getName(),
-                mapearStatusContratado(s.getStatus())
+                s.getStatus()
         )).collect(Collectors.toList());
-    }
-
-    private String mapearStatusContratado(StatusServico status) {
-        if (status == StatusServico.REALIZADO) {
-            return "CONCLUIDO";
-        }
-
-        return status.name();
     }
 
     public ServicoDetalheResponseDto buscarPorId(Long id) {
