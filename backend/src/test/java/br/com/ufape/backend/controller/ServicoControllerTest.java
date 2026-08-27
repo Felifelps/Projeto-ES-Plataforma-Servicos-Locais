@@ -31,8 +31,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -94,7 +92,7 @@ class ServicoControllerTest {
     @Test
     void devePermitirListarServicosContratadosParaUsuarioAutenticadoComOutraRole() throws Exception {
         User prestadorAutenticado = criarUsuarioAutenticado(2L, "Carlos", "carlos@email.com", UserRole.PRESTADOR);
-        when(servicoService.buscarContratadosPorCliente(eq(prestadorAutenticado.getId()))).thenReturn(List.of());
+        when(servicoService.buscarContratadosPorCliente(prestadorAutenticado.getId())).thenReturn(List.of());
 
         mockMvc.perform(get("/api/servicos/contratados")
                         .contextPath("/api")
@@ -127,7 +125,7 @@ class ServicoControllerTest {
                 )
         );
 
-        when(servicoService.buscarContratadosPorCliente(eq(usuarioAutenticado.getId()))).thenReturn(response);
+        when(servicoService.buscarContratadosPorCliente(usuarioAutenticado.getId())).thenReturn(response);
 
         mockMvc.perform(get("/api/servicos/contratados")
                         .contextPath("/api")
@@ -168,7 +166,11 @@ class ServicoControllerTest {
                 LocalDateTime.of(2026, 8, 20, 10, 0)
         );
 
-        when(avaliacaoService.criar(eq(1L), eq(usuarioAutenticado), any(AvaliacaoRequestDto.class))).thenReturn(response);
+        when(avaliacaoService.criar(
+                1L,
+                usuarioAutenticado,
+                new AvaliacaoRequestDto(5, "Excelente atendimento")
+        )).thenReturn(response);
 
         mockMvc.perform(post("/api/servicos/1/avaliacoes")
                         .contextPath("/api")
@@ -198,7 +200,11 @@ class ServicoControllerTest {
 
     @Test
     void deveRetornar404QuandoServicoNaoExistir() throws Exception {
-        when(avaliacaoService.criar(eq(999L), eq(usuarioAutenticado), any(AvaliacaoRequestDto.class)))
+        when(avaliacaoService.criar(
+                999L,
+                usuarioAutenticado,
+                new AvaliacaoRequestDto(5, "Excelente atendimento")
+        ))
                 .thenThrow(new ServicoNotFoundException());
 
         mockMvc.perform(post("/api/servicos/999/avaliacoes")
@@ -213,7 +219,11 @@ class ServicoControllerTest {
 
     @Test
     void deveRetornar403QuandoServicoNaoPuderSerAvaliado() throws Exception {
-        when(avaliacaoService.criar(eq(1L), eq(usuarioAutenticado), any(AvaliacaoRequestDto.class)))
+        when(avaliacaoService.criar(
+                1L,
+                usuarioAutenticado,
+                new AvaliacaoRequestDto(5, "Excelente atendimento")
+        ))
                 .thenThrow(new ServicoNaoDisponivelParaAvaliacaoException());
 
         mockMvc.perform(post("/api/servicos/1/avaliacoes")
@@ -229,7 +239,11 @@ class ServicoControllerTest {
 
     @Test
     void deveRetornar409QuandoAvaliacaoForDuplicada() throws Exception {
-        when(avaliacaoService.criar(eq(1L), eq(usuarioAutenticado), any(AvaliacaoRequestDto.class)))
+        when(avaliacaoService.criar(
+                1L,
+                usuarioAutenticado,
+                new AvaliacaoRequestDto(5, "Excelente atendimento")
+        ))
                 .thenThrow(new AvaliacaoDuplicadaException());
 
         mockMvc.perform(post("/api/servicos/1/avaliacoes")

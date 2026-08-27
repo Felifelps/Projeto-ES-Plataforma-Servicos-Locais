@@ -30,7 +30,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -197,8 +196,8 @@ class ServicoServiceTest {
         servico.setStatus(StatusServico.CONTRATADO);
 
         when(servicoRepository.findContratadosByClienteId(
-                eq(clienteId),
-                eq(List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO))
+                clienteId,
+                List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO)
         )).thenReturn(List.of(servico));
 
         List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
@@ -235,8 +234,8 @@ class ServicoServiceTest {
         servico.setStatus(StatusServico.EM_ANDAMENTO);
 
         when(servicoRepository.findContratadosByClienteId(
-                eq(clienteId),
-                eq(List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO))
+                clienteId,
+                List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO)
         )).thenReturn(List.of(servico));
 
         List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
@@ -267,8 +266,8 @@ class ServicoServiceTest {
         servico.setStatus(StatusServico.REALIZADO);
 
         when(servicoRepository.findContratadosByClienteId(
-                eq(clienteId),
-                eq(List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO))
+                clienteId,
+                List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO)
         )).thenReturn(List.of(servico));
 
         List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
@@ -281,8 +280,8 @@ class ServicoServiceTest {
     void deveRetornarListaVaziaQuandoClienteNaoPossuirServicosContratados() {
         Long clienteId = 30L;
         when(servicoRepository.findContratadosByClienteId(
-                eq(clienteId),
-                eq(List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO))
+                clienteId,
+                List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO)
         )).thenReturn(List.of());
 
         List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);

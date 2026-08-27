@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ServicoService {
@@ -71,7 +70,7 @@ public class ServicoService {
                 s.getLocalizacao(), 
                 s.getAreaAtendimento(), 
                 s.getPrestador().getUser().getName()
-        )).collect(Collectors.toList());
+        )).toList();
     }
 
     // Busca serviços vinculados ao id do usuário do prestador
@@ -85,7 +84,7 @@ public class ServicoService {
                 s.getLocalizacao(),
                 s.getAreaAtendimento(),
                 s.getPrestador().getUser().getName()
-        )).collect(Collectors.toList());
+        )).toList();
     }
 
     public List<ServicoContratadoResponseDto> buscarContratadosPorCliente(Long usuarioId) {
@@ -102,7 +101,7 @@ public class ServicoService {
                 s.getAreaAtendimento(),
                 s.getPrestador().getUser().getName(),
                 s.getStatus()
-        )).collect(Collectors.toList());
+        )).toList();
     }
 
     public ServicoDetalheResponseDto buscarPorId(Long id) {
