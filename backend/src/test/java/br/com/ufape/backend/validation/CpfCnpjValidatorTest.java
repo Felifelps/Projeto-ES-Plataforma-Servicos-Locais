@@ -36,7 +36,7 @@ class CpfCnpjValidatorTest {
     @Test
     void deveValidarDocumentoUsandoDocumentUtils() {
         // Testa o fluxo chamando o DocumentUtils.isValid(value)
-        boolean resultadoValido = validator.isValid("111.444.777-05", context);
+        boolean resultadoValido = validator.isValid("111.444.777-35", context);
         boolean resultadoInvalido = validator.isValid("1234", context);
 
         assertTrue(resultadoValido);
