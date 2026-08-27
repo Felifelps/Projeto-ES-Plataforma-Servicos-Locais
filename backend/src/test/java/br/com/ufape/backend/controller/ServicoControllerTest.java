@@ -17,20 +17,28 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import java.util.List;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication; 
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -186,4 +194,65 @@ class ServicoControllerTest {
                 .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.message").value("O usuário já avaliou este serviço"));
     }
+
+    private UsernamePasswordAuthenticationToken getAuth(Long userId) {
+        User usuarioLogado = new User();
+        usuarioLogado.setId(userId);
+        return new UsernamePasswordAuthenticationToken(usuarioLogado, null, List.of());
+    }
+    
+   @Test
+    void deveAtualizarStatusComSucesso() throws Exception {
+        mockMvc.perform(put("/servicos/1/status") 
+                .with(authentication(getAuth(1L)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"status\": \"EM_ANDAMENTO\" }"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deveRetornar401SeNaoAutenticado() throws Exception {
+        mockMvc.perform(put("/servicos/1/status") 
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"status\": \"EM_ANDAMENTO\" }"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void deveRetornar403SeNaoForODono() throws Exception {
+        doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN))
+            .when(servicoService).atualizarStatus(eq(1L), any(), eq(1L));
+
+        mockMvc.perform(put("/servicos/1/status") 
+                .with(authentication(getAuth(1L)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"status\": \"EM_ANDAMENTO\" }"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void deveRetornar400SeTransicaoInvalida() throws Exception {
+        doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST))
+            .when(servicoService).atualizarStatus(eq(1L), any(), eq(1L));
+
+        mockMvc.perform(put("/servicos/1/status") 
+                .with(authentication(getAuth(1L)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"status\": \"REALIZADO\" }"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void deveRetornar404SeServicoNaoExistir() throws Exception {
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+            .when(servicoService).atualizarStatus(eq(999L), any(), eq(1L));
+
+        mockMvc.perform(put("/servicos/999/status") 
+                .with(authentication(getAuth(1L)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"status\": \"EM_ANDAMENTO\" }"))
+                .andExpect(status().isNotFound());
+    }
+
+
 }
