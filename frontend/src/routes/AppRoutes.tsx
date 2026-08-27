@@ -8,10 +8,12 @@ import BecomeProvider from '../pages/BecomeProvider/BecomeProvider';
 import Servicos from '../pages/Servicos/Servicos';
 import ServicoDetalhe from '../pages/ServicoDetalhe/ServicoDetalhe';
 import MeusServicos from '../pages/MeusServicos/MeusServicos';
+import ServicosContratadosCliente from '../pages/ServicosContratadosCliente/ServicosContratadosCliente';
 import SolicitarOrcamento from '../pages/SolicitarOrcamento/SolicitarOrcamento';
 import AvaliarPrestador from '../pages/AvaliarPrestador/AvaliarPrestador';
 import OrcamentosRecebidos from '../pages/OrcamentosRecebidos/OrcamentosRecebidos';
 import MeusOrcamentosSolicitados from '../pages/MeusOrcamentosSolicitados/MeusOrcamentosSolicitados';
+import MeusServicosContratados from '../pages/MeusServicosContratados/MeusServicosContratados';
 
 export default function AppRoutes() {
   return (
@@ -37,10 +39,15 @@ export default function AppRoutes() {
         <Route path="/meus-orcamentos" element={<MeusOrcamentosSolicitados />} />
       </Route>
 
+      <Route element={<PrivateRoute allowedRoles={['USER']} requireRole />}>
+        <Route path="/meus-servicos-contratados" element={<ServicosContratadosCliente />} />
+      </Route>
+
       <Route element={<PrivateRoute allowedRoles={['PRESTADOR']} requireRole />}>
         <Route path="/servicos/cadastrar" element={<CadastroServico />} />
         <Route path="/meus-servicos" element={<MeusServicos />} />
         <Route path="/meus-servicos/orcamentos/:id" element={<OrcamentosRecebidos />} />
+        <Route path='/meus-servicos/contratados/:id' element={<MeusServicosContratados/>} />
       </Route>
 
       {/* Redirecionamento para rota não encontrada ou padrão */}

@@ -60,7 +60,8 @@
   color: #166534;
 }
 
-.btn-nav-orcamentos {
+.btn-nav-orcamentos,
+.btn-nav-servicos-contratados {
   text-decoration: none;
   background-color: #f1f5f9;
   color: #1e293b;
@@ -74,7 +75,8 @@
   align-items: center;
 }
 
-.btn-nav-orcamentos:hover {
+.btn-nav-orcamentos:hover,
+.btn-nav-servicos-contratados:hover {
   background-color: #e2e8f0;
   color: #0f172a;
 }

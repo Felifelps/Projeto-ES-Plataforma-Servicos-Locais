@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { cadastroServicoService } from '../../services/cadastro-servico.service';
-import type { ServicoCadastroResponse } from '../../models/servico-cadastro.model';
 import Logo from '../../components/Logo/Logo';
+import type { ServicoCadastroResponse } from '../../models/servico-cadastro.model';
+import { cadastroServicoService } from '../../services/cadastro-servico.service';
 import './MeusServicos.css';
 
 export default function MeusServicos() {
@@ -55,6 +55,10 @@ export default function MeusServicos() {
 
   const handleVerOrcamentos = (servicoId: number) => {
     navigate(`/meus-servicos/orcamentos/${servicoId}`);
+  };
+
+  const handleVerContratados = (servicoId: number) => {
+    navigate(`/meus-servicos/contratados/${servicoId}`);
   };
 
   return (
@@ -110,6 +114,14 @@ export default function MeusServicos() {
                     onClick={() => handleVerOrcamentos(servico.id)}
                   >
                     Ver Orçamentos
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn-contratados"
+                    onClick={() => handleVerContratados(servico.id)}
+                  >
+                    Serviços Contratados
                   </button>
 
                   <button

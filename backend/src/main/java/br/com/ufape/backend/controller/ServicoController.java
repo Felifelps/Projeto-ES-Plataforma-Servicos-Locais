@@ -1,5 +1,6 @@
 package br.com.ufape.backend.controller;
 
+import br.com.ufape.backend.dto.AtualizarStatusServicoDto;
 import br.com.ufape.backend.dto.AvaliacaoRequestDto;
 import br.com.ufape.backend.dto.AvaliacaoResponseDto;
 import br.com.ufape.backend.dto.ServicoContratadoResponseDto;
@@ -88,5 +89,16 @@ public class ServicoController {
 
         servicoService.deletarServico(id, usuarioAutenticado.getId());
         return ResponseEntity.noContent().build(); // Retorna 204 No Content
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Void> atualizarStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody AtualizarStatusServicoDto dto,
+            @AuthenticationPrincipal User usuarioLogado) { // Spring injeta o dono do token aqui
+        
+        servicoService.atualizarStatus(id, dto.status(), usuarioLogado.getId());
+        
+        return ResponseEntity.noContent().build(); // Retorna HTTP 204 (Sucesso)
     }
 }
