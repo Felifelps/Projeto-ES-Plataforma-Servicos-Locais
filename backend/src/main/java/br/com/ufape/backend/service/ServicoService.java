@@ -26,14 +26,17 @@ import java.util.List;
 @Service
 public class ServicoService {
 
-    @Autowired
-    private ServicoRepository servicoRepository;
+    private final ServicoRepository servicoRepository;
+    private final ProviderProfileRepository providerProfileRepository;
+    private final ServiceCategoryRepository categoryRepository;
 
-    @Autowired
-    private ProviderProfileRepository providerProfileRepository;
-
-    @Autowired
-    private ServiceCategoryRepository categoryRepository;
+    public ServicoService(ServicoRepository servicoRepository, 
+                          ProviderProfileRepository providerProfileRepository, 
+                          ServiceCategoryRepository categoryRepository) {
+        this.servicoRepository = servicoRepository;
+        this.providerProfileRepository = providerProfileRepository;
+        this.categoryRepository = categoryRepository;
+    }
 
     public Servico cadastrarServico(ServicoRequestDto dto) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();

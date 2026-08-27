@@ -24,11 +24,15 @@ import java.util.List;
 @RequestMapping("/servicos")
 public class ServicoController {
 
-    @Autowired
-    private ServicoService servicoService;
+       
+    private final ServicoService servicoService;
 
-    @Autowired
-    private AvaliacaoService avaliacaoService;
+    private final AvaliacaoService avaliacaoService;
+
+    public ServicoController(ServicoService servicoService, AvaliacaoService avaliacaoService) {
+        this.servicoService = servicoService;
+        this.avaliacaoService = avaliacaoService;
+    }
 
     @PostMapping
     public ResponseEntity<Servico> cadastrar(@RequestBody @Valid ServicoRequestDto dto) {
