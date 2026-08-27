@@ -3,6 +3,7 @@ package br.com.ufape.backend.controller;
 import br.com.ufape.backend.dto.AtualizarStatusServicoDto;
 import br.com.ufape.backend.dto.AvaliacaoRequestDto;
 import br.com.ufape.backend.dto.AvaliacaoResponseDto;
+import br.com.ufape.backend.dto.ServicoContratadoResponseDto;
 import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
 import br.com.ufape.backend.dto.ServicoResumoResponseDto;
@@ -53,6 +54,15 @@ public class ServicoController {
 
         List<ServicoResumoResponseDto> meusServicos = servicoService.buscarPorPrestador(usuarioAutenticado.getId());
         return ResponseEntity.ok(meusServicos);
+    }
+
+    @GetMapping("/contratados")
+    public ResponseEntity<List<ServicoContratadoResponseDto>> listarServicosContratados(
+            @AuthenticationPrincipal User usuarioAutenticado) {
+
+        List<ServicoContratadoResponseDto> servicosContratados =
+                servicoService.buscarContratadosPorCliente(usuarioAutenticado.getId());
+        return ResponseEntity.ok(servicosContratados);
     }
 
     // Busca os detalhes de um serviço específico pelo ID

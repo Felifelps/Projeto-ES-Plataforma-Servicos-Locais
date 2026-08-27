@@ -1,5 +1,6 @@
 package br.com.ufape.backend.service;
 
+import br.com.ufape.backend.dto.ServicoContratadoResponseDto;
 import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
 import br.com.ufape.backend.dto.ServicoResumoResponseDto;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ServicoService {
@@ -71,7 +71,7 @@ public class ServicoService {
                 s.getLocalizacao(), 
                 s.getAreaAtendimento(), 
                 s.getPrestador().getUser().getName()
-        )).collect(Collectors.toList());
+        )).toList();
     }
 
     // Busca serviços vinculados ao id do usuário do prestador
@@ -85,7 +85,24 @@ public class ServicoService {
                 s.getLocalizacao(),
                 s.getAreaAtendimento(),
                 s.getPrestador().getUser().getName()
-        )).collect(Collectors.toList());
+        )).toList();
+    }
+
+    public List<ServicoContratadoResponseDto> buscarContratadosPorCliente(Long usuarioId) {
+        List<Servico> servicos = servicoRepository.findContratadosByClienteId(
+                usuarioId,
+                List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO)
+        );
+
+        return servicos.stream().map(s -> new ServicoContratadoResponseDto(
+                s.getId(),
+                s.getTitulo(),
+                s.getCategoria().getName(),
+                s.getLocalizacao(),
+                s.getAreaAtendimento(),
+                s.getPrestador().getUser().getName(),
+                s.getStatus()
+        )).toList();
     }
 
     public ServicoDetalheResponseDto buscarPorId(Long id) {

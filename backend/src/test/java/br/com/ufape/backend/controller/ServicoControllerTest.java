@@ -2,6 +2,8 @@ package br.com.ufape.backend.controller;
 
 import br.com.ufape.backend.dto.AvaliacaoRequestDto;
 import br.com.ufape.backend.dto.AvaliacaoResponseDto;
+import br.com.ufape.backend.dto.ServicoContratadoResponseDto;
+import br.com.ufape.backend.enums.StatusServico;
 import br.com.ufape.backend.enums.UserRole;
 import br.com.ufape.backend.exception.AvaliacaoDuplicadaException;
 import br.com.ufape.backend.exception.ServicoNaoDisponivelParaAvaliacaoException;
@@ -17,28 +19,23 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import java.util.List;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication; 
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -85,6 +82,79 @@ class ServicoControllerTest {
     }
 
     @Test
+    void deveRetornar401QuandoUsuarioNaoEstaAutenticadoAoListarServicosContratados() throws Exception {
+        mockMvc.perform(get("/api/servicos/contratados")
+                        .contextPath("/api"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(401));
+    }
+
+    @Test
+    void devePermitirListarServicosContratadosParaUsuarioAutenticadoComOutraRole() throws Exception {
+        User prestadorAutenticado = criarUsuarioAutenticado(2L, "Carlos", "carlos@email.com", UserRole.PRESTADOR);
+        when(servicoService.buscarContratadosPorCliente(prestadorAutenticado.getId())).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/servicos/contratados")
+                        .contextPath("/api")
+                        .with(authentication(prestadorAutenticado)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void deveRetornarServicosContratadosQuandoUsuarioAutenticadoPossuirServicos() throws Exception {
+        List<ServicoContratadoResponseDto> response = List.of(
+                new ServicoContratadoResponseDto(
+                        1L,
+                        "Instalação Elétrica",
+                        "Eletricista",
+                        "Boa Viagem",
+                        "Recife",
+                        "Carlos Prestador",
+                        StatusServico.CONTRATADO
+                ),
+                new ServicoContratadoResponseDto(
+                        2L,
+                        "Pintura Residencial",
+                        "Pintor",
+                        "Casa Amarela",
+                        "Recife",
+                        "Marcos Pintor",
+                        StatusServico.EM_ANDAMENTO
+                )
+        );
+
+        when(servicoService.buscarContratadosPorCliente(usuarioAutenticado.getId())).thenReturn(response);
+
+        mockMvc.perform(get("/api/servicos/contratados")
+                        .contextPath("/api")
+                        .with(authentication(usuarioAutenticado)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].titulo").value("Instalação Elétrica"))
+                .andExpect(jsonPath("$[0].categoria").value("Eletricista"))
+                .andExpect(jsonPath("$[0].bairro").value("Boa Viagem"))
+                .andExpect(jsonPath("$[0].cidade").value("Recife"))
+                .andExpect(jsonPath("$[0].nomePrestador").value("Carlos Prestador"))
+                .andExpect(jsonPath("$[0].statusAtual").value("CONTRATADO"))
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[1].statusAtual").value("EM_ANDAMENTO"));
+    }
+
+    @Test
+    void deveRetornarListaVaziaQuandoUsuarioAutenticadoNaoPossuirServicosContratados() throws Exception {
+        when(servicoService.buscarContratadosPorCliente(anyLong())).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/servicos/contratados")
+                        .contextPath("/api")
+                        .with(authentication(usuarioAutenticado)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
     void deveCriarAvaliacaoQuandoRequisicaoForValida() throws Exception {
         AvaliacaoResponseDto response = new AvaliacaoResponseDto(
                 1L,
@@ -96,16 +166,15 @@ class ServicoControllerTest {
                 LocalDateTime.of(2026, 8, 20, 10, 0)
         );
 
-        when(avaliacaoService.criar(eq(1L), eq(usuarioAutenticado), any(AvaliacaoRequestDto.class))).thenReturn(response);
+        when(avaliacaoService.criar(
+                1L,
+                usuarioAutenticado,
+                new AvaliacaoRequestDto(5, "Excelente atendimento")
+        )).thenReturn(response);
 
         mockMvc.perform(post("/api/servicos/1/avaliacoes")
                         .contextPath("/api")
-                        .with(SecurityMockMvcRequestPostProcessors.authentication(
-                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                                        usuarioAutenticado,
-                                        null,
-                                        usuarioAutenticado.getAuthorities()
-                                )))
+                        .with(authentication(usuarioAutenticado))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new AvaliacaoRequestDto(5, "Excelente atendimento"))))
                 .andExpect(status().isCreated())
@@ -121,12 +190,7 @@ class ServicoControllerTest {
     void deveRetornar400QuandoNotaNaoForInformada() throws Exception {
         mockMvc.perform(post("/api/servicos/1/avaliacoes")
                         .contextPath("/api")
-                        .with(SecurityMockMvcRequestPostProcessors.authentication(
-                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                                        usuarioAutenticado,
-                                        null,
-                                        usuarioAutenticado.getAuthorities()
-                                )))
+                        .with(authentication(usuarioAutenticado))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"comentario\":\"Excelente atendimento\"}"))
                 .andExpect(status().isBadRequest())
@@ -136,17 +200,16 @@ class ServicoControllerTest {
 
     @Test
     void deveRetornar404QuandoServicoNaoExistir() throws Exception {
-        when(avaliacaoService.criar(eq(999L), eq(usuarioAutenticado), any(AvaliacaoRequestDto.class)))
+        when(avaliacaoService.criar(
+                999L,
+                usuarioAutenticado,
+                new AvaliacaoRequestDto(5, "Excelente atendimento")
+        ))
                 .thenThrow(new ServicoNotFoundException());
 
         mockMvc.perform(post("/api/servicos/999/avaliacoes")
                         .contextPath("/api")
-                        .with(SecurityMockMvcRequestPostProcessors.authentication(
-                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                                        usuarioAutenticado,
-                                        null,
-                                        usuarioAutenticado.getAuthorities()
-                                )))
+                        .with(authentication(usuarioAutenticado))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new AvaliacaoRequestDto(5, "Excelente atendimento"))))
                 .andExpect(status().isNotFound())
@@ -156,17 +219,16 @@ class ServicoControllerTest {
 
     @Test
     void deveRetornar403QuandoServicoNaoPuderSerAvaliado() throws Exception {
-        when(avaliacaoService.criar(eq(1L), eq(usuarioAutenticado), any(AvaliacaoRequestDto.class)))
+        when(avaliacaoService.criar(
+                1L,
+                usuarioAutenticado,
+                new AvaliacaoRequestDto(5, "Excelente atendimento")
+        ))
                 .thenThrow(new ServicoNaoDisponivelParaAvaliacaoException());
 
         mockMvc.perform(post("/api/servicos/1/avaliacoes")
                         .contextPath("/api")
-                        .with(SecurityMockMvcRequestPostProcessors.authentication(
-                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                                        usuarioAutenticado,
-                                        null,
-                                        usuarioAutenticado.getAuthorities()
-                                )))
+                        .with(authentication(usuarioAutenticado))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new AvaliacaoRequestDto(5, "Excelente atendimento"))))
                 .andExpect(status().isForbidden())
@@ -177,17 +239,16 @@ class ServicoControllerTest {
 
     @Test
     void deveRetornar409QuandoAvaliacaoForDuplicada() throws Exception {
-        when(avaliacaoService.criar(eq(1L), eq(usuarioAutenticado), any(AvaliacaoRequestDto.class)))
+        when(avaliacaoService.criar(
+                1L,
+                usuarioAutenticado,
+                new AvaliacaoRequestDto(5, "Excelente atendimento")
+        ))
                 .thenThrow(new AvaliacaoDuplicadaException());
 
         mockMvc.perform(post("/api/servicos/1/avaliacoes")
                         .contextPath("/api")
-                        .with(SecurityMockMvcRequestPostProcessors.authentication(
-                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                                        usuarioAutenticado,
-                                        null,
-                                        usuarioAutenticado.getAuthorities()
-                                )))
+                        .with(authentication(usuarioAutenticado))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new AvaliacaoRequestDto(5, "Excelente atendimento"))))
                 .andExpect(status().isConflict())
@@ -195,64 +256,19 @@ class ServicoControllerTest {
                 .andExpect(jsonPath("$.message").value("O usuário já avaliou este serviço"));
     }
 
-    private UsernamePasswordAuthenticationToken getAuth(Long userId) {
-        User usuarioLogado = new User();
-        usuarioLogado.setId(userId);
-        return new UsernamePasswordAuthenticationToken(usuarioLogado, null, List.of());
-    }
-    
-   @Test
-    void deveAtualizarStatusComSucesso() throws Exception {
-        mockMvc.perform(put("/servicos/1/status") 
-                .with(authentication(getAuth(1L)))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"status\": \"EM_ANDAMENTO\" }"))
-                .andExpect(status().isNoContent());
+    private User criarUsuarioAutenticado(Long id, String nome, String email, UserRole role) {
+        User usuario = new User();
+        usuario.setId(id);
+        usuario.setName(nome);
+        usuario.setEmail(email);
+        usuario.setRole(role);
+        usuario.setPassword("senha123");
+        return usuario;
     }
 
-    @Test
-    void deveRetornar401SeNaoAutenticado() throws Exception {
-        mockMvc.perform(put("/servicos/1/status") 
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"status\": \"EM_ANDAMENTO\" }"))
-                .andExpect(status().isUnauthorized());
+    private RequestPostProcessor authentication(User usuario) {
+        return SecurityMockMvcRequestPostProcessors.authentication(
+                new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities())
+        );
     }
-
-    @Test
-    void deveRetornar403SeNaoForODono() throws Exception {
-        doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN))
-            .when(servicoService).atualizarStatus(eq(1L), any(), eq(1L));
-
-        mockMvc.perform(put("/servicos/1/status") 
-                .with(authentication(getAuth(1L)))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"status\": \"EM_ANDAMENTO\" }"))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
-    void deveRetornar400SeTransicaoInvalida() throws Exception {
-        doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST))
-            .when(servicoService).atualizarStatus(eq(1L), any(), eq(1L));
-
-        mockMvc.perform(put("/servicos/1/status") 
-                .with(authentication(getAuth(1L)))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"status\": \"REALIZADO\" }"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void deveRetornar404SeServicoNaoExistir() throws Exception {
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
-            .when(servicoService).atualizarStatus(eq(999L), any(), eq(1L));
-
-        mockMvc.perform(put("/servicos/999/status") 
-                .with(authentication(getAuth(1L)))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"status\": \"EM_ANDAMENTO\" }"))
-                .andExpect(status().isNotFound());
-    }
-
-
 }

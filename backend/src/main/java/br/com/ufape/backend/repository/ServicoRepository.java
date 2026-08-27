@@ -1,5 +1,6 @@
 package br.com.ufape.backend.repository;
 
+import br.com.ufape.backend.enums.StatusServico;
 import br.com.ufape.backend.model.Servico;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,18 @@ public interface ServicoRepository extends JpaRepository<Servico, Long> {
     );
     
     List<Servico> findByPrestadorUserId(Long usuarioId);
+
+    @Query("""
+        SELECT s
+        FROM Servico s
+        JOIN FETCH s.categoria
+        JOIN FETCH s.prestador p
+        JOIN FETCH p.user
+        WHERE s.cliente.id = :usuarioId
+          AND s.status IN :statuses
+        """)
+    List<Servico> findContratadosByClienteId(
+        @Param("usuarioId") Long usuarioId,
+        @Param("statuses") List<StatusServico> statuses
+    );
 }

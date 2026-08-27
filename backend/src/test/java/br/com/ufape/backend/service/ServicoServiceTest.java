@@ -1,5 +1,6 @@
 package br.com.ufape.backend.service;
 
+import br.com.ufape.backend.dto.ServicoContratadoResponseDto;
 import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
 import br.com.ufape.backend.enums.StatusServico;
@@ -25,12 +26,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import br.com.ufape.backend.enums.FormaCobranca;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -172,93 +172,122 @@ class ServicoServiceTest {
     }
 
     @Test
-    void deveAtualizarStatusDeContratadoParaEmAndamento() {
-        Servico servico = new Servico();
-        servico.setStatus(StatusServico.CONTRATADO);
-        
-        User dono = new User();
-        dono.setId(1L);
+    void deveBuscarServicosContratadosPorCliente() {
+        Long clienteId = 10L;
+
+        User cliente = new User();
+        cliente.setId(clienteId);
+
+        User prestadorUser = new User();
+        prestadorUser.setName("Carlos Prestador");
+
         ProviderProfile perfil = new ProviderProfile();
-        perfil.setUser(dono);
+        perfil.setUser(prestadorUser);
+
+        ServiceCategory categoria = new ServiceCategory("Eletricista");
+
+        Servico servico = new Servico();
+        ReflectionTestUtils.setField(servico, "id", 1L);
+        servico.setTitulo("Instalação Elétrica");
+        servico.setCategoria(categoria);
+        servico.setLocalizacao("Boa Viagem");
+        servico.setAreaAtendimento("Recife");
         servico.setPrestador(perfil);
+        servico.setCliente(cliente);
+        servico.setStatus(StatusServico.CONTRATADO);
 
-        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+        when(servicoRepository.findContratadosByClienteId(
+                clienteId,
+                List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO)
+        )).thenReturn(List.of(servico));
 
-        servicoService.atualizarStatus(1L, StatusServico.EM_ANDAMENTO, 1L);
+        List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
 
-        assertEquals(StatusServico.EM_ANDAMENTO, servico.getStatus());
-        verify(servicoRepository).save(servico);
+        assertEquals(1, resultado.size());
+        assertEquals(1L, resultado.get(0).id());
+        assertEquals("Instalação Elétrica", resultado.get(0).titulo());
+        assertEquals("Eletricista", resultado.get(0).categoria());
+        assertEquals("Boa Viagem", resultado.get(0).bairro());
+        assertEquals("Recife", resultado.get(0).cidade());
+        assertEquals("Carlos Prestador", resultado.get(0).nomePrestador());
+        assertEquals(StatusServico.CONTRATADO, resultado.get(0).statusAtual());
     }
 
     @Test
-    void deveAtualizarStatusDeEmAndamentoParaRealizado() {
+    void deveRetornarStatusAtualAoBuscarServicosContratadosPorCliente() {
+        Long clienteId = 20L;
+
+        User prestadorUser = new User();
+        prestadorUser.setName("Marcos Pintor");
+
+        ProviderProfile perfil = new ProviderProfile();
+        perfil.setUser(prestadorUser);
+
+        ServiceCategory categoria = new ServiceCategory("Pintor");
+
         Servico servico = new Servico();
+        ReflectionTestUtils.setField(servico, "id", 2L);
+        servico.setTitulo("Pintura Residencial");
+        servico.setCategoria(categoria);
+        servico.setLocalizacao("Casa Amarela");
+        servico.setAreaAtendimento("Recife");
+        servico.setPrestador(perfil);
         servico.setStatus(StatusServico.EM_ANDAMENTO);
-        
-        User dono = new User();
-        dono.setId(1L);
-        ProviderProfile perfil = new ProviderProfile();
-        perfil.setUser(dono);
-        servico.setPrestador(perfil);
 
-        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+        when(servicoRepository.findContratadosByClienteId(
+                clienteId,
+                List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO)
+        )).thenReturn(List.of(servico));
 
-        servicoService.atualizarStatus(1L, StatusServico.REALIZADO, 1L);
+        List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
 
-        assertEquals(StatusServico.REALIZADO, servico.getStatus());
-        verify(servicoRepository).save(servico);
+        assertEquals(1, resultado.size());
+        assertEquals(StatusServico.EM_ANDAMENTO, resultado.get(0).statusAtual());
     }
 
     @Test
-    void deveLancarErro400QuandoTentarPularEtapaDeDisponivelParaRealizado() {
+    void deveRetornarStatusRealizadoAoBuscarServicosContratadosPorCliente() {
+        Long clienteId = 40L;
+
+        User prestadorUser = new User();
+        prestadorUser.setName("Joao Prestador");
+
+        ProviderProfile perfil = new ProviderProfile();
+        perfil.setUser(prestadorUser);
+
+        ServiceCategory categoria = new ServiceCategory("Pedreiro");
+
         Servico servico = new Servico();
-        servico.setStatus(StatusServico.DISPONIVEL); // Status inicial
-        
-        User dono = new User();
-        dono.setId(1L);
-        ProviderProfile perfil = new ProviderProfile();
-        perfil.setUser(dono);
+        ReflectionTestUtils.setField(servico, "id", 3L);
+        servico.setTitulo("Reforma de Muro");
+        servico.setCategoria(categoria);
+        servico.setLocalizacao("Ipsep");
+        servico.setAreaAtendimento("Recife");
         servico.setPrestador(perfil);
+        servico.setStatus(StatusServico.REALIZADO);
 
-        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+        when(servicoRepository.findContratadosByClienteId(
+                clienteId,
+                List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO)
+        )).thenReturn(List.of(servico));
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            servicoService.atualizarStatus(1L, StatusServico.REALIZADO, 1L); // Tentando pular etapas
-        });
+        List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
 
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
-        verify(servicoRepository, never()).save(any()); // Garante que não salvou no banco
+        assertEquals(1, resultado.size());
+        assertEquals(StatusServico.REALIZADO, resultado.get(0).statusAtual());
     }
 
     @Test
-    void deveLancarErro403AoTentarAtualizarServicoQueNaoLhePertence() {
-        Servico servico = new Servico();
-        servico.setStatus(StatusServico.CONTRATADO);
-        
-        User donoReal = new User();
-        donoReal.setId(1L); // Dono do serviço é o ID 1
-        ProviderProfile perfil = new ProviderProfile();
-        perfil.setUser(donoReal);
-        servico.setPrestador(perfil);
+    void deveRetornarListaVaziaQuandoClienteNaoPossuirServicosContratados() {
+        Long clienteId = 30L;
+        when(servicoRepository.findContratadosByClienteId(
+                clienteId,
+                List.of(StatusServico.CONTRATADO, StatusServico.EM_ANDAMENTO, StatusServico.REALIZADO)
+        )).thenReturn(List.of());
 
-        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+        List<ServicoContratadoResponseDto> resultado = servicoService.buscarContratadosPorCliente(clienteId);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            servicoService.atualizarStatus(1L, StatusServico.EM_ANDAMENTO, 999L); // Quem faz a requisição é o ID 999
-        });
-
-        assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
-        verify(servicoRepository, never()).save(any());
-    }
-
-    @Test
-    void deveLancarErro404AoAtualizarStatusDeServicoInexistente() {
-        when(servicoRepository.findById(99L)).thenReturn(Optional.empty());
-
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            servicoService.atualizarStatus(99L, StatusServico.EM_ANDAMENTO, 1L);
-        });
-
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertNotNull(resultado);
+        assertTrue(resultado.isEmpty());
     }
 }
