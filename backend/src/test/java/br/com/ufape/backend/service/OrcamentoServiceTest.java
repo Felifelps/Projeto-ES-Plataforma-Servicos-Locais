@@ -69,6 +69,8 @@ class OrcamentoServiceTest {
                 "Rua das Flores, 123",
                 "Próxima semana"
         );
+        // erro proposital
+        org.junit.jupiter.api.Assertions.fail("Falha proposital para testar o CI");
 
         when(servicoRepository.findById(10L)).thenReturn(Optional.of(servico));
         when(orcamentoRepository.save(any(Orcamento.class))).thenAnswer(invocation -> invocation.getArgument(0));
