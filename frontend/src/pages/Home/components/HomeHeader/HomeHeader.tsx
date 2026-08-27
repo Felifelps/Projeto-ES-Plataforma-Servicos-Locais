@@ -26,6 +26,14 @@ export default function HomeHeader({ isAuthenticated, userRole }: HeaderSectionP
         <nav className="header-actions">
           {isAuthenticated ? (
             <div className="user-profile-nav">
+              {userRole === 'USER' && (
+                <Link
+                  to="/meus-servicos-contratados"
+                  className="btn-nav-servicos-contratados"
+                >
+                  Serviços Contratados
+                </Link>
+              )}
               <Link
               to='/meus-orcamentos'
               className="btn-nav-orcamentos"
