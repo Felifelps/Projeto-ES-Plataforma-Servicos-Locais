@@ -4,7 +4,6 @@ import br.com.ufape.backend.dto.ServicoContratadoResponseDto;
 import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
 import br.com.ufape.backend.enums.StatusServico;
-import br.com.ufape.backend.exception.ServicoNotFoundException;
 import br.com.ufape.backend.model.*;
 import br.com.ufape.backend.repository.ProviderProfileRepository;
 import br.com.ufape.backend.repository.ServiceCategoryRepository;

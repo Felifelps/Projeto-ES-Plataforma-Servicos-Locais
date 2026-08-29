@@ -27,17 +27,17 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Autowired
-    private AuthenticationManager manager;
+    private final AuthenticationManager manager;
 
-    @Autowired
-    private TokenService tokenService;
+    private final TokenService tokenService;
 
-
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, AuthenticationManager manager, TokenService tokenService) {
         this.authService = authService;
+        this.manager = manager;
+        this.tokenService = tokenService;
     }
 
+    
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> register(@RequestBody @Valid UserRequestDto userDTO) {
         UserResponseDto userResponseDto = this.authService.register(userDTO);

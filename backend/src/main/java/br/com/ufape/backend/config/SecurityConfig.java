@@ -38,32 +38,40 @@ public class SecurityConfig {
 
     @Bean
     @SuppressWarnings("java:S4502")
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPointHandler))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/auth/register", "/auth/login", "/auth/logout", "/error").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/servicos").hasRole("PRESTADOR")
-                        .requestMatchers(HttpMethod.POST, "/servicos/*/avaliacoes").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/servicos/contratados").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/servicos/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/orcamentos/recebidos").hasRole("PRESTADOR")
-                        .requestMatchers(HttpMethod.POST, "/orcamentos").authenticated()
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
+        try {
+            http
+                    .csrf(csrf -> csrf.disable())
+                    .cors(Customizer.withDefaults())
+                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPointHandler))
+                    .authorizeHttpRequests(auth -> auth
+                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                            .requestMatchers("/auth/register", "/auth/login", "/auth/logout", "/error").permitAll()
+                            .requestMatchers("/admin/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.POST, "/servicos").hasRole("PRESTADOR")
+                            .requestMatchers(HttpMethod.POST, "/servicos/*/avaliacoes").authenticated()
+                            .requestMatchers(HttpMethod.GET, "/servicos/contratados").authenticated()
+                            .requestMatchers(HttpMethod.GET, "/servicos/**").authenticated()
+                            .requestMatchers(HttpMethod.GET, "/orcamentos/recebidos").hasRole("PRESTADOR")
+                            .requestMatchers(HttpMethod.POST, "/orcamentos").authenticated()
+                            .anyRequest().authenticated()
+                    )
+                    .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
+            return http.build();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao configurar o SecurityFilterChain", e);
+        }
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
+        try {
+            return authenticationConfiguration.getAuthenticationManager();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao carregar AuthenticationManager", e);
+        }
     }
 
     @Bean

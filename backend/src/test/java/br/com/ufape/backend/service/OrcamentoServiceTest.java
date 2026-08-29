@@ -145,7 +145,7 @@ class OrcamentoServiceTest {
         orcamentoNoBanco.setPrestador(prestador);
         orcamentoNoBanco.setSolicitante(solicitante);
         orcamentoNoBanco.setServico(servico);
-        orcamentoNoBanco.setStatus_resposta("PENDENTE");
+        orcamentoNoBanco.setStatusResposta("PENDENTE");
 
         OrcamentoResponderRequestDto dto = new OrcamentoResponderRequestDto(
                 new BigDecimal("500.00"), 
@@ -158,9 +158,9 @@ class OrcamentoServiceTest {
         OrcamentoResponseDto resultado = orcamentoService.responder(1L, prestadorAutenticado, dto);
 
         assertNotNull(resultado);
-        assertEquals("RESPONDIDO", resultado.status_resposta());
-        assertEquals(new BigDecimal("500.00"), resultado.valor_resposta());
-        assertEquals("Consigo fazer o serviço na quinta-feira", resultado.descricao_resposta());
+        assertEquals("RESPONDIDO", resultado.statusResposta());
+        assertEquals(new BigDecimal("500.00"), resultado.valorResposta());
+        assertEquals("Consigo fazer o serviço na quinta-feira", resultado.descricaoResposta());
     }
 
     @Test
@@ -174,7 +174,7 @@ class OrcamentoServiceTest {
         orcamentoNoBanco.setPrestador(prestador);
         orcamentoNoBanco.setSolicitante(solicitante);
         orcamentoNoBanco.setServico(servico);
-        orcamentoNoBanco.setStatus_resposta("RESPONDIDO");
+        orcamentoNoBanco.setStatusResposta("RESPONDIDO");
 
         when(orcamentoRepository.findById(1L)).thenReturn(Optional.of(orcamentoNoBanco));
         when(orcamentoRepository.save(any(Orcamento.class))).thenAnswer(i -> i.getArgument(0));
@@ -182,7 +182,7 @@ class OrcamentoServiceTest {
         OrcamentoResponseDto resultado = orcamentoService.aceitar(1L, solicitante);
 
         assertNotNull(resultado);
-        assertEquals("ACEITO", resultado.status_resposta());
+        assertEquals("ACEITO", resultado.statusResposta());
         assertEquals(solicitante, servico.getCliente());
         assertEquals(StatusServico.CONTRATADO, servico.getStatus());
     }
@@ -198,7 +198,7 @@ class OrcamentoServiceTest {
         orcamentoNoBanco.setPrestador(prestador);
         orcamentoNoBanco.setSolicitante(solicitante);
         orcamentoNoBanco.setServico(servico);
-        orcamentoNoBanco.setStatus_resposta("RESPONDIDO");
+        orcamentoNoBanco.setStatusResposta("RESPONDIDO");
 
         User outroUsuario = new User();
         ReflectionTestUtils.setField(outroUsuario, "id", 99L);
@@ -224,7 +224,7 @@ class OrcamentoServiceTest {
         orcamentoNoBanco.setPrestador(prestador);
         orcamentoNoBanco.setSolicitante(solicitante);
         orcamentoNoBanco.setServico(servico);
-        orcamentoNoBanco.setStatus_resposta("PENDENTE");
+        orcamentoNoBanco.setStatusResposta("PENDENTE");
 
         when(orcamentoRepository.findById(1L)).thenReturn(Optional.of(orcamentoNoBanco));
 
@@ -247,7 +247,7 @@ class OrcamentoServiceTest {
         orcamentoNoBanco.setPrestador(prestador);
         orcamentoNoBanco.setSolicitante(solicitante);
         orcamentoNoBanco.setServico(servico);
-        orcamentoNoBanco.setStatus_resposta("RESPONDIDO");
+        orcamentoNoBanco.setStatusResposta("RESPONDIDO");
 
         when(orcamentoRepository.findById(1L)).thenReturn(Optional.of(orcamentoNoBanco));
 

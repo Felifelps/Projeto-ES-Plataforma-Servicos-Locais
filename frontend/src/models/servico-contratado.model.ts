@@ -2,6 +2,7 @@ export type StatusServicoContratado = 'CONTRATADO' | 'EM_ANDAMENTO' | 'CONCLUIDO
 
 export interface ServicoContratado {
   id: number;
+  servicoId: number;
   titulo: string;
   categoria: string;
   bairro: string;

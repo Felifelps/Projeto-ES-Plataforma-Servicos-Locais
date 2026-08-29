@@ -11,7 +11,7 @@ public record OrcamentoResponseDto(
         String nomePrestador,
         String nomeSolicitante,
         String emailSolicitante,
-        String descricao_resposta,
-        String status_resposta,
-        BigDecimal valor_resposta
+        String descricaoResposta,
+        String statusResposta,
+        BigDecimal valorResposta
 ) {}

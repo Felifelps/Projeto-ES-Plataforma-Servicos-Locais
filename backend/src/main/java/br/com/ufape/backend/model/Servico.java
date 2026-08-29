@@ -46,7 +46,9 @@ public class Servico {
     @Column(nullable = false, length = 50)
     private StatusServico status;
 
-    public Servico() {}
+    public Servico() {
+        // Construtor vazio exigido pelo JPA
+    }
 
     public Long getId() { return id; }
     public String getTitulo() { return titulo; }

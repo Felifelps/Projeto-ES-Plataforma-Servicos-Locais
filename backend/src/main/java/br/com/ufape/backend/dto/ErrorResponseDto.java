@@ -1,6 +1,5 @@
 package br.com.ufape.backend.dto;
 
-import java.time.LocalDateTime;
 
 public record ErrorResponseDto(
         int status,
