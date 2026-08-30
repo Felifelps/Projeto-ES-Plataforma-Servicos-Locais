@@ -3,6 +3,7 @@ package br.com.ufape.backend.service;
 import br.com.ufape.backend.dto.ServicoContratadoResponseDto;
 import br.com.ufape.backend.dto.ServicoDetalheResponseDto;
 import br.com.ufape.backend.dto.ServicoRequestDto;
+import br.com.ufape.backend.dto.ServicoResumoResponseDto;
 import br.com.ufape.backend.enums.StatusServico;
 import br.com.ufape.backend.model.*;
 import br.com.ufape.backend.repository.ProviderProfileRepository;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -30,6 +30,9 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,11 +57,11 @@ class ServicoServiceTest {
         usuarioMock = new User();
         usuarioMock.setEmail("rafael@teste.com");
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        Mockito.lenient().when(authentication.getPrincipal()).thenReturn(usuarioMock);
+        Authentication authentication = mock(Authentication.class);
+        lenient().when(authentication.getPrincipal()).thenReturn(usuarioMock);
 
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.lenient().when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        lenient().when(securityContext.getAuthentication()).thenReturn(authentication);
 
         SecurityContextHolder.setContext(securityContext);
     }
@@ -104,6 +107,109 @@ class ServicoServiceTest {
         assertEquals(StatusServico.DISPONIVEL, resultado.getStatus());
     }
 
+    @Test
+    void deveLancarErroAoCadastrarServicoSemPerfilDePrestador() {
+        ServicoRequestDto dto = new ServicoRequestDto(
+                "Instalação de Fiação",
+                "Descricao",
+                "Local",
+                "Area",
+                1L,
+                FormaCobranca.VALOR_FIXO_TOTAL
+        );
+
+        when(providerProfileRepository.findByUser(usuarioMock)).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> servicoService.cadastrarServico(dto));
+
+        assertEquals("Perfil de prestador não encontrado para este usuário.", exception.getMessage());
+    }
+
+    @Test
+    void deveLancarErroAoCadastrarServicoSemCategoria() {
+        ServicoRequestDto dto = new ServicoRequestDto(
+                "Instalação de Fiação",
+                "Descricao",
+                "Local",
+                "Area",
+                1L,
+                FormaCobranca.VALOR_FIXO_TOTAL
+        );
+
+        ProviderProfile perfil = new ProviderProfile();
+        perfil.setUser(usuarioMock);
+
+        when(providerProfileRepository.findByUser(usuarioMock)).thenReturn(Optional.of(perfil));
+        when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> servicoService.cadastrarServico(dto));
+
+        assertEquals("Categoria não encontrada.", exception.getMessage());
+    }
+
+    @Test
+    void deveBuscarServicosComFiltrosOpcionais() {
+        User prestadorUser = new User();
+        prestadorUser.setName("Carlos Prestador");
+
+        ProviderProfile perfil = new ProviderProfile();
+        perfil.setUser(prestadorUser);
+
+        ServiceCategory categoria = new ServiceCategory("Eletricista");
+
+        Servico servico = new Servico();
+        ReflectionTestUtils.setField(servico, "id", 1L);
+        servico.setTitulo("Instalação Elétrica");
+        servico.setCategoria(categoria);
+        servico.setLocalizacao("Boa Viagem");
+        servico.setAreaAtendimento("Recife");
+        servico.setPrestador(perfil);
+
+        when(servicoRepository.buscarComFiltrosOpcionais("eletricista", "%recife%", "%boa%"))
+                .thenReturn(List.of(servico));
+
+        List<ServicoResumoResponseDto> resultado = servicoService.buscar("Eletricista", "Recife", "Boa");
+
+        assertEquals(1, resultado.size());
+        assertEquals("Instalação Elétrica", resultado.get(0).titulo());
+        assertEquals("Carlos Prestador", resultado.get(0).nomePrestador());
+    }
+
+    @Test
+    void deveBuscarServicosSemFiltros() {
+        when(servicoRepository.buscarComFiltrosOpcionais(null, null, null)).thenReturn(List.of());
+
+        List<ServicoResumoResponseDto> resultado = servicoService.buscar(null, null, null);
+
+        assertTrue(resultado.isEmpty());
+    }
+
+    @Test
+    void deveBuscarServicosPorPrestador() {
+        User prestadorUser = new User();
+        prestadorUser.setName("Carlos Prestador");
+
+        ProviderProfile perfil = new ProviderProfile();
+        perfil.setUser(prestadorUser);
+
+        ServiceCategory categoria = new ServiceCategory("Eletricista");
+
+        Servico servico = new Servico();
+        ReflectionTestUtils.setField(servico, "id", 5L);
+        servico.setTitulo("Instalação Elétrica");
+        servico.setCategoria(categoria);
+        servico.setLocalizacao("Boa Viagem");
+        servico.setAreaAtendimento("Recife");
+        servico.setPrestador(perfil);
+
+        when(servicoRepository.findByPrestadorUserId(10L)).thenReturn(List.of(servico));
+
+        List<ServicoResumoResponseDto> resultado = servicoService.buscarPorPrestador(10L);
+
+        assertEquals(1, resultado.size());
+        assertEquals("Eletricista", resultado.get(0).categoria());
+    }
+
 
     @Test
     void deveRetornarDetalhesDoServicoQuandoIdExistir() {
@@ -140,6 +246,31 @@ class ServicoServiceTest {
         User usuario = new User();
         usuario.setName("Rafael Teste");
         perfil.setUser(usuario);
+
+        ServiceCategory categoria = new ServiceCategory("Eletricista");
+
+        Servico servicoMock = new Servico();
+        ReflectionTestUtils.setField(servicoMock, "id", idBusca);
+        servicoMock.setTitulo("Instalação de Fiação");
+        servicoMock.setCategoria(categoria);
+        servicoMock.setPrestador(perfil);
+        servicoMock.setFormaCobranca(FormaCobranca.VALOR_FIXO_TOTAL);
+
+        when(servicoRepository.findById(idBusca)).thenReturn(Optional.of(servicoMock));
+
+        ServicoDetalheResponseDto resultado = servicoService.buscarPorId(idBusca);
+
+        assertEquals("Não informado", resultado.telefonePrestador());
+    }
+
+    @Test
+    void deveRetornarTelefoneNaoInformadoQuandoPrestadorTiverListaVazia() {
+        Long idBusca = 2L;
+        ProviderProfile perfil = new ProviderProfile();
+        User usuario = new User();
+        usuario.setName("Rafael Teste");
+        perfil.setUser(usuario);
+        perfil.setPhones(List.of());
 
         ServiceCategory categoria = new ServiceCategory("Eletricista");
 
@@ -288,5 +419,111 @@ class ServicoServiceTest {
 
         assertNotNull(resultado);
         assertTrue(resultado.isEmpty());
+    }
+
+    @Test
+    void deveDeletarServicoQuandoUsuarioForODono() {
+        Servico servico = criarServicoComPrestador(1L, 10L, StatusServico.DISPONIVEL);
+
+        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+
+        servicoService.deletarServico(1L, 10L);
+
+        verify(servicoRepository).delete(servico);
+    }
+
+    @Test
+    void deveLancarErro404AoDeletarServicoInexistente() {
+        when(servicoRepository.findById(1L)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> servicoService.deletarServico(1L, 10L)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
+
+    @Test
+    void deveLancarErro403AoDeletarServicoDeOutroPrestador() {
+        Servico servico = criarServicoComPrestador(1L, 10L, StatusServico.DISPONIVEL);
+        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> servicoService.deletarServico(1L, 99L)
+        );
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+    }
+
+    @Test
+    void deveAtualizarStatusDoServicoComSucesso() {
+        Servico servico = criarServicoComPrestador(1L, 10L, StatusServico.CONTRATADO);
+        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+
+        servicoService.atualizarStatus(1L, StatusServico.EM_ANDAMENTO, 10L);
+
+        assertEquals(StatusServico.EM_ANDAMENTO, servico.getStatus());
+        verify(servicoRepository).save(servico);
+    }
+
+    @Test
+    void deveLancarErro404AoAtualizarStatusDeServicoInexistente() {
+        when(servicoRepository.findById(1L)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> servicoService.atualizarStatus(1L, StatusServico.EM_ANDAMENTO, 10L)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
+
+    @Test
+    void deveLancarErro403AoAtualizarStatusDeServicoDeOutroPrestador() {
+        Servico servico = criarServicoComPrestador(1L, 10L, StatusServico.CONTRATADO);
+        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> servicoService.atualizarStatus(1L, StatusServico.EM_ANDAMENTO, 99L)
+        );
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+    }
+
+    @Test
+    void deveLancarErro400AoAtualizarStatusComTransicaoInvalida() {
+        Servico servico = criarServicoComPrestador(1L, 10L, StatusServico.DISPONIVEL);
+        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> servicoService.atualizarStatus(1L, StatusServico.EM_ANDAMENTO, 10L)
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+    }
+
+    private Servico criarServicoComPrestador(Long idServico, Long idPrestador, StatusServico status) {
+        User prestadorUser = new User();
+        prestadorUser.setId(idPrestador);
+        prestadorUser.setName("Carlos Prestador");
+
+        ProviderProfile perfil = new ProviderProfile();
+        perfil.setUser(prestadorUser);
+
+        ServiceCategory categoria = new ServiceCategory("Eletricista");
+
+        Servico servico = new Servico();
+        ReflectionTestUtils.setField(servico, "id", idServico);
+        servico.setTitulo("Instalação Elétrica");
+        servico.setCategoria(categoria);
+        servico.setLocalizacao("Boa Viagem");
+        servico.setAreaAtendimento("Recife");
+        servico.setPrestador(perfil);
+        servico.setStatus(status);
+        return servico;
     }
 }
