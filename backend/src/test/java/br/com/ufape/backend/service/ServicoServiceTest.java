@@ -477,7 +477,8 @@ class ServicoServiceTest {
                 servicoService.buscarContratadosNaoIniciadosPorPrestador(prestadorUsuarioId);
 
         assertNotNull(resultado);
-        assertTrue(resultado.isEmpty());
+        assertTrue(resultado.isEmpty());}
+    @Test
     void deveDeletarServicoQuandoUsuarioForODono() {
         Servico servico = criarServicoComPrestador(1L, 10L, StatusServico.DISPONIVEL);
 
