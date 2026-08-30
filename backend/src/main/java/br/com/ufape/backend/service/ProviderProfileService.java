@@ -73,7 +73,7 @@ public class ProviderProfileService {
 
         Set<String> foundNames = found.stream()
                 .filter(Objects::nonNull)
-                .map(category -> category.getName())
+                .map(ServiceCategory::getName)
                 .collect(Collectors.toSet());
 
         for (String name : categoryNames) {

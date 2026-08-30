@@ -88,7 +88,7 @@ class OrcamentoServiceTest {
         assertEquals("cliente@teste.com", resultado.emailSolicitante());
 
         ArgumentCaptor<Orcamento> captor = ArgumentCaptor.forClass(Orcamento.class);
-        org.mockito.Mockito.verify(orcamentoRepository).save(captor.capture());
+        verify(orcamentoRepository).save(captor.capture());
         assertEquals(servico, captor.getValue().getServico());
         assertEquals(prestador, captor.getValue().getPrestador());
         assertEquals(solicitante, captor.getValue().getSolicitante());
