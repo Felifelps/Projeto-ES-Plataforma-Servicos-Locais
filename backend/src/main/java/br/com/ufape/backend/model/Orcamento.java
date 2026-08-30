@@ -48,7 +48,7 @@ public class Orcamento {
     private String statusResposta = "PENDENTE";
 
     public Orcamento() {
-        // Construtor vazio exigido pelo JPA}
+        // Construtor vazio exigido pelo JPA
     }    
     public Long getId() { return id; }
     public String getDescricaoNecessidade() { return descricaoNecessidade; }

@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -87,7 +88,7 @@ class OrcamentoServiceTest {
         assertEquals("cliente@teste.com", resultado.emailSolicitante());
 
         ArgumentCaptor<Orcamento> captor = ArgumentCaptor.forClass(Orcamento.class);
-        org.mockito.Mockito.verify(orcamentoRepository).save(captor.capture());
+        verify(orcamentoRepository).save(captor.capture());
         assertEquals(servico, captor.getValue().getServico());
         assertEquals(prestador, captor.getValue().getPrestador());
         assertEquals(solicitante, captor.getValue().getSolicitante());
@@ -95,6 +96,7 @@ class OrcamentoServiceTest {
 
     @Test
     void deveLancarErro404QuandoServicoNaoExistir() {
+        User usuario = new User();
         OrcamentoRequestDto dto = new OrcamentoRequestDto(
                 99L,
                 "Descrição",
@@ -106,10 +108,30 @@ class OrcamentoServiceTest {
 
         ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
-                () -> orcamentoService.solicitar(new User(), dto)
+                () -> orcamentoService.solicitar(usuario, dto)
         );
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
+
+    @Test
+    void deveLancarErro404QuandoPrestadorDoServicoNaoExistir() {
+        User usuario = new User();
+        servico = new Servico();
+        ReflectionTestUtils.setField(servico, "id", 10L);
+        servico.setTitulo("Instalação Elétrica");
+
+        OrcamentoRequestDto dto = new OrcamentoRequestDto(10L, "Descrição", "Local", "Amanhã");
+
+        when(servicoRepository.findById(10L)).thenReturn(Optional.of(servico));
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> orcamentoService.solicitar(usuario, dto)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Prestador não encontrado", exception.getReason());
     }
 
     @Test
@@ -164,6 +186,68 @@ class OrcamentoServiceTest {
     }
 
     @Test
+    void deveLancarErro404AoResponderQuandoOrcamentoNaoExistir() {
+        User prestadorAutenticado = new User();
+        prestadorAutenticado.setId(7L);
+        OrcamentoResponderRequestDto dto = new OrcamentoResponderRequestDto(new BigDecimal("500.00"), "Resposta");
+
+        when(orcamentoRepository.findById(1L)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> orcamentoService.responder(1L, prestadorAutenticado, dto)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
+
+    @Test
+    void deveLancarErro403AoResponderQuandoUsuarioNaoForODono() {
+        configurarServicoValido();
+        User prestadorAutenticado = new User();
+        prestadorAutenticado.setId(9L);
+        OrcamentoResponderRequestDto dto = new OrcamentoResponderRequestDto(new BigDecimal("500.00"), "Resposta");
+        ReflectionTestUtils.setField(prestador.getUser(), "id", 7L);
+
+        Orcamento orcamentoNoBanco = new Orcamento();
+        orcamentoNoBanco.setPrestador(prestador);
+        orcamentoNoBanco.setSolicitante(solicitante);
+        orcamentoNoBanco.setServico(servico);
+
+        when(orcamentoRepository.findById(1L)).thenReturn(Optional.of(orcamentoNoBanco));
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> orcamentoService.responder(1L, prestadorAutenticado, dto)
+        );
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+    }
+
+    @Test
+    void deveLancarErro400AoResponderQuandoOrcamentoJaFoiRespondido() {
+        configurarServicoValido();
+        User prestadorAutenticado = prestador.getUser();
+        ReflectionTestUtils.setField(prestadorAutenticado, "id", 7L);
+        OrcamentoResponderRequestDto dto = new OrcamentoResponderRequestDto(new BigDecimal("500.00"), "Resposta");
+
+        Orcamento orcamentoNoBanco = new Orcamento();
+        orcamentoNoBanco.setPrestador(prestador);
+        orcamentoNoBanco.setSolicitante(solicitante);
+        orcamentoNoBanco.setServico(servico);
+        orcamentoNoBanco.setStatusResposta("RESPONDIDO");
+
+        when(orcamentoRepository.findById(1L)).thenReturn(Optional.of(orcamentoNoBanco));
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> orcamentoService.responder(1L, prestadorAutenticado, dto)
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+    }
+
+    @Test
     void deveAceitarOrcamentoEVincularClienteAoServico() {
         configurarServicoValido();
         ReflectionTestUtils.setField(solicitante, "id", 20L);
@@ -214,6 +298,19 @@ class OrcamentoServiceTest {
     }
 
     @Test
+    void deveLancarErro404QuandoOrcamentoNaoExistirAoAceitar() {
+        User usuario = new User();
+        when(orcamentoRepository.findById(1L)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> orcamentoService.aceitar(1L, usuario)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
+
+    @Test
     void deveLancarErro400QuandoOrcamentoNaoFoiRespondido() {
         configurarServicoValido();
         ReflectionTestUtils.setField(solicitante, "id", 20L);
@@ -257,5 +354,106 @@ class OrcamentoServiceTest {
         );
 
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+    }
+
+    @Test
+    void deveRecusarOrcamentoComSucesso() {
+        configurarServicoValido();
+        ReflectionTestUtils.setField(solicitante, "id", 20L);
+
+        Orcamento orcamentoNoBanco = new Orcamento();
+        ReflectionTestUtils.setField(orcamentoNoBanco, "id", 1L);
+        orcamentoNoBanco.setPrestador(prestador);
+        orcamentoNoBanco.setSolicitante(solicitante);
+        orcamentoNoBanco.setServico(servico);
+        orcamentoNoBanco.setStatusResposta("RESPONDIDO");
+
+        when(orcamentoRepository.findById(1L)).thenReturn(Optional.of(orcamentoNoBanco));
+        when(orcamentoRepository.save(any(Orcamento.class))).thenAnswer(i -> i.getArgument(0));
+
+        OrcamentoResponseDto resultado = orcamentoService.recusar(1L, solicitante);
+
+        assertEquals("RECUSADO", resultado.statusResposta());
+        verify(orcamentoRepository).save(orcamentoNoBanco);
+    }
+
+    @Test
+    void deveLancarErro404AoRecusarQuandoOrcamentoNaoExistir() {
+        User usuario = new User();
+        when(orcamentoRepository.findById(1L)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> orcamentoService.recusar(1L, usuario)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
+
+    @Test
+    void deveLancarErro403AoRecusarQuandoNaoForOSolicitante() {
+        configurarServicoValido();
+        ReflectionTestUtils.setField(solicitante, "id", 20L);
+
+        User outroUsuario = new User();
+        outroUsuario.setId(99L);
+
+        Orcamento orcamentoNoBanco = new Orcamento();
+        orcamentoNoBanco.setPrestador(prestador);
+        orcamentoNoBanco.setSolicitante(solicitante);
+        orcamentoNoBanco.setServico(servico);
+        orcamentoNoBanco.setStatusResposta("RESPONDIDO");
+
+        when(orcamentoRepository.findById(1L)).thenReturn(Optional.of(orcamentoNoBanco));
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> orcamentoService.recusar(1L, outroUsuario)
+        );
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+    }
+
+    @Test
+    void deveLancarErro400AoRecusarQuandoOrcamentoNaoFoiRespondido() {
+        configurarServicoValido();
+        ReflectionTestUtils.setField(solicitante, "id", 20L);
+
+        Orcamento orcamentoNoBanco = new Orcamento();
+        orcamentoNoBanco.setPrestador(prestador);
+        orcamentoNoBanco.setSolicitante(solicitante);
+        orcamentoNoBanco.setServico(servico);
+        orcamentoNoBanco.setStatusResposta("PENDENTE");
+
+        when(orcamentoRepository.findById(1L)).thenReturn(Optional.of(orcamentoNoBanco));
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> orcamentoService.recusar(1L, solicitante)
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+    }
+
+    @Test
+    void deveListarOrcamentosSolicitadosPorCliente() {
+        configurarServicoValido();
+
+        Orcamento orcamento = new Orcamento();
+        ReflectionTestUtils.setField(orcamento, "id", 2L);
+        orcamento.setDescricaoNecessidade("Pintura");
+        orcamento.setLocalAtendimento("Boa Viagem");
+        orcamento.setDataOuPeriodoDesejado("Segunda");
+        orcamento.setServico(servico);
+        orcamento.setPrestador(prestador);
+        orcamento.setSolicitante(solicitante);
+
+        when(orcamentoRepository.findBySolicitanteId(20L)).thenReturn(List.of(orcamento));
+
+        List<OrcamentoResponseDto> resultado = orcamentoService.buscarSolicitadosPorCliente(20L);
+
+        assertEquals(1, resultado.size());
+        assertEquals("Cliente Teste", resultado.get(0).nomeSolicitante());
+        assertEquals("Rafael Prestador", resultado.get(0).nomePrestador());
     }
 }

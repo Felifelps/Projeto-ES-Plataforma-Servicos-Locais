@@ -7,8 +7,7 @@ public enum StatusServico {
     REALIZADO;
 
     public boolean isMudancaValida(StatusServico novoStatus) {
-        if (this == CONTRATADO && novoStatus == EM_ANDAMENTO) return true;
-        if (this == EM_ANDAMENTO && novoStatus == REALIZADO) return true;
-        return false; 
+    return (this == CONTRATADO && novoStatus == EM_ANDAMENTO)
+            || (this == EM_ANDAMENTO && novoStatus == REALIZADO);
     }
 }

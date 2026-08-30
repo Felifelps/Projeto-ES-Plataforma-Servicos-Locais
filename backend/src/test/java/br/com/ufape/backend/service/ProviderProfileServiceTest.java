@@ -78,11 +78,12 @@ class ProviderProfileServiceTest {
     @Test
     void shouldRejectWhenUserAlreadyHasProfile() {
         User user = usuario();
+        ProviderProfileRequestDto request = requestValido();
         
         when(providerProfileRepository.existsByUserId(user.getId())).thenReturn(true);
 
         assertThrows(ProviderProfileAlreadyExistsException.class,
-                () -> providerProfileService.criar(user, requestValido()));
+                () -> providerProfileService.criar(user, request));
 
         verify(providerProfileRepository, never()).save(any());
         verify(userRepository, never()).save(any());
@@ -91,13 +92,14 @@ class ProviderProfileServiceTest {
     @Test
     void shouldRejectWhenCategoryDoesNotExist() {
         User user = usuario();
+        ProviderProfileRequestDto request = requestValido();
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(providerProfileRepository.existsByUserId(user.getId())).thenReturn(false);
         when(serviceCategoryRepository.findByNameIn(List.of("Eletricista")))
                 .thenReturn(List.of());
 
         assertThrows(InvalidServiceCategoryException.class,
-                () -> providerProfileService.criar(user, requestValido()));
+                () -> providerProfileService.criar(user, request));
 
         verify(providerProfileRepository, never()).save(any());
         verify(userRepository, never()).save(any());

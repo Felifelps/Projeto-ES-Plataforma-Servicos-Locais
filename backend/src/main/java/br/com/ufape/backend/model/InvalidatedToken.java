@@ -2,6 +2,7 @@ package br.com.ufape.backend.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Entity
 @Table(name = "invalidated_tokens")
@@ -23,7 +24,7 @@ public class InvalidatedToken {
 
     public InvalidatedToken(String token) {
         this.token = token;
-        this.invalidatedAt = LocalDateTime.now();
+        this.invalidatedAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     public Long getId() { return id; }
