@@ -81,6 +81,29 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    void deveTratarHttpMessageNotReadableExceptionComEnumInvalido() {
+        HttpInputMessage inputMessage = mock(HttpInputMessage.class);
+        tools.jackson.databind.exc.InvalidFormatException cause =
+                tools.jackson.databind.exc.InvalidFormatException.from(
+                        null,
+                        "Valor inválido",
+                        "INEXISTENTE",
+                        StatusServico.class
+                );
+
+        HttpMessageNotReadableException ex =
+                new HttpMessageNotReadableException("JSON inválido", cause, inputMessage);
+
+        ResponseEntity<ErrorResponseDto> response = exceptionHandler.handleMessageNotReadable(ex);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(
+                "Valor inválido para o campo. Use um dos seguintes: [DISPONIVEL, CONTRATADO, EM_ANDAMENTO, REALIZADO]",
+                response.getBody().message()
+        );
+    }
+
+    @Test
     void deveTratarHttpMessageNotReadableExceptionGenerica() {
         HttpInputMessage inputMessage = mock(HttpInputMessage.class);
         HttpMessageNotReadableException ex = new HttpMessageNotReadableException("JSON malformado", inputMessage);

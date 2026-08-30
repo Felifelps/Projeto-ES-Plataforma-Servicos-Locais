@@ -6,6 +6,7 @@ import br.com.ufape.backend.model.User;
 import br.com.ufape.backend.repository.UserRepository;
 import br.com.ufape.backend.service.AuthService;
 import br.com.ufape.backend.service.TokenService;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -108,6 +110,35 @@ class AuthControllerTest {
     @Test
     void deveFazerLogoutSemHeaderAuthorization() throws Exception {
         mockMvc.perform(post("/auth/logout"))
+                .andExpect(status().isNoContent());
+
+        verify(tokenService, never()).invalidateToken(anyString());
+    }
+
+    @Test
+    void deveRetornar401QuandoLoginForInvalido() throws Exception {
+        when(authenticationManager.authenticate(any()))
+                .thenThrow(new BadCredentialsException("credenciais inválidas"));
+
+        String jsonPayload = """
+            {
+                "email": "teste@email.com",
+                "password": "senhaErrada"
+            }
+            """;
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonPayload))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.message").value("Email ou senha inválidos"));
+    }
+
+    @Test
+    void deveFazerLogoutSemInvalidarQuandoHeaderNaoForBearer() throws Exception {
+        mockMvc.perform(post("/auth/logout")
+                        .header("Authorization", "Basic abc"))
                 .andExpect(status().isNoContent());
 
         verify(tokenService, never()).invalidateToken(anyString());
