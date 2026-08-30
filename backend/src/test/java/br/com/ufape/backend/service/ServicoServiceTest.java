@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -31,6 +30,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,11 +57,11 @@ class ServicoServiceTest {
         usuarioMock = new User();
         usuarioMock.setEmail("rafael@teste.com");
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        Mockito.lenient().when(authentication.getPrincipal()).thenReturn(usuarioMock);
+        Authentication authentication = mock(Authentication.class);
+        lenient().when(authentication.getPrincipal()).thenReturn(usuarioMock);
 
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.lenient().when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        lenient().when(securityContext.getAuthentication()).thenReturn(authentication);
 
         SecurityContextHolder.setContext(securityContext);
     }

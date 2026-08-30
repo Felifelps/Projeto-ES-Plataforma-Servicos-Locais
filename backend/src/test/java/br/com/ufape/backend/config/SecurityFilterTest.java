@@ -10,21 +10,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class SecurityFilterTest {
 
-    private final TokenService tokenService = Mockito.mock(TokenService.class);
-    private final UserRepository userRepository = Mockito.mock(UserRepository.class);
+    private final TokenService tokenService = mock(TokenService.class);
+    private final UserRepository userRepository = mock(UserRepository.class);
     private final SecurityFilter securityFilter = new SecurityFilter(tokenService, userRepository);
 
     @AfterEach
@@ -34,23 +35,23 @@ class SecurityFilterTest {
 
     @Test
     void deveIgnorarRequestsOptions() throws ServletException, IOException {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-        FilterChain filterChain = Mockito.mock(FilterChain.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain filterChain = mock(FilterChain.class);
 
         when(request.getMethod()).thenReturn("OPTIONS");
 
         securityFilter.doFilterInternal(request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
-        verify(tokenService, never()).validateToken(Mockito.anyString());
+        verify(tokenService, never()).validateToken(anyString());
     }
 
     @Test
     void deveSeguirFluxoQuandoTokenEstiverAusente() throws ServletException, IOException {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-        FilterChain filterChain = Mockito.mock(FilterChain.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain filterChain = mock(FilterChain.class);
 
         when(request.getMethod()).thenReturn("GET");
         when(request.getHeader("Authorization")).thenReturn(null);
@@ -58,45 +59,45 @@ class SecurityFilterTest {
         securityFilter.doFilterInternal(request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
-        verify(tokenService, never()).validateToken(Mockito.anyString());
+        verify(tokenService, never()).validateToken(anyString());
         assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 
     @Test
     void deveSeguirFluxoQuandoHeaderAuthorizationEstiverVazio() throws ServletException, IOException {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-        FilterChain filterChain = Mockito.mock(FilterChain.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain filterChain = mock(FilterChain.class);
 
         when(request.getMethod()).thenReturn("GET");
         when(request.getHeader("Authorization")).thenReturn("");
 
         securityFilter.doFilterInternal(request, response, filterChain);
 
-        verify(tokenService, never()).validateToken(Mockito.anyString());
+        verify(tokenService, never()).validateToken(anyString());
         assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 
     @Test
     void deveSeguirFluxoQuandoHeaderNaoForBearer() throws ServletException, IOException {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-        FilterChain filterChain = Mockito.mock(FilterChain.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain filterChain = mock(FilterChain.class);
 
         when(request.getMethod()).thenReturn("GET");
         when(request.getHeader("Authorization")).thenReturn("Basic abc");
 
         securityFilter.doFilterInternal(request, response, filterChain);
 
-        verify(tokenService, never()).validateToken(Mockito.anyString());
+        verify(tokenService, never()).validateToken(anyString());
         assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 
     @Test
     void deveAutenticarUsuarioQuandoTokenForValido() throws ServletException, IOException {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-        FilterChain filterChain = Mockito.mock(FilterChain.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain filterChain = mock(FilterChain.class);
 
         User user = new User();
         user.setEmail("ana@email.com");
@@ -117,9 +118,9 @@ class SecurityFilterTest {
 
     @Test
     void deveNaoAutenticarQuandoTokenValidadoRetornarVazio() throws ServletException, IOException {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-        FilterChain filterChain = Mockito.mock(FilterChain.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain filterChain = mock(FilterChain.class);
 
         when(request.getMethod()).thenReturn("GET");
         when(request.getHeader("Authorization")).thenReturn("Bearer token-invalido");
@@ -127,15 +128,15 @@ class SecurityFilterTest {
 
         securityFilter.doFilterInternal(request, response, filterChain);
 
-        verify(userRepository, never()).findByEmail(Mockito.anyString());
+        verify(userRepository, never()).findByEmail(anyString());
         assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 
     @Test
     void deveLimparContextoQuandoFalharAoValidarToken() throws ServletException, IOException {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-        FilterChain filterChain = Mockito.mock(FilterChain.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain filterChain = mock(FilterChain.class);
 
         when(request.getMethod()).thenReturn("GET");
         when(request.getHeader("Authorization")).thenReturn("Bearer token-quebrado");
