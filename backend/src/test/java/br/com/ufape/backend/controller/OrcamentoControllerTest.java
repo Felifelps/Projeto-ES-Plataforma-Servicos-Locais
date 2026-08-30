@@ -134,9 +134,8 @@ class OrcamentoControllerTest {
 
         String jsonPayload = """
             {
-                "status_resposta": "ACEITO",
-                "valor_resposta": 150.00,
-                "descricao_resposta": "Orcamento aprovado para execução do serviço"
+                "valorResposta": 150.00,
+                "descricaoResposta": "Orcamento aprovado para execução do serviço"
             }
             """;
 
